@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'subkategori_jasa',
+    'diskon',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +79,9 @@ WSGI_APPLICATION = 'ug_sijarta.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'sijarta',
+        'USER': 'postgres',
+        'PASSWORD': 'passsword',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
