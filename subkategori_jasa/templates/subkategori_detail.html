@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ subkategori.nama_subkategori }}</title>
+</head>
+<body>
+    <h1>{{ subkategori.nama_subkategori }}</h1>
+    <p>{{ subkategori.deskripsi }}</p>
+    <h2>Sesi Layanan</h2>
+    <ul>
+        {% for sesi in sesi_layanan %}
+        <li>Sesi {{ sesi.sesi }}: Rp {{ sesi.harga }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
