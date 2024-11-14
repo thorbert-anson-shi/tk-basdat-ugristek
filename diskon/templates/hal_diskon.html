@@ -1,1 +1,53 @@
-<h1>Diskon</h1>
+{% extends 'base.html' %}
+{% block meta %} 
+  <title>Diskon | Sijarta</title>
+
+  <!--Delete this afterwards-->
+  <script src="https://cdn.tailwindcss.com"></script>
+{% endblock meta %}
+{% block content %}
+<div class="container mx-auto p-4">
+  <h1 class="text-3xl font-bold text-center mb-4">Diskon</h1>
+  
+  <p>Voucher</p>
+  <div class="border-2 border-gray-400 p-6 rounded-lg space-y-4">
+    <div class="relative">
+      <table class="w-full text-left">
+        <tbody>
+          {% for voucher in data_voucher%}
+            <tr>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.0 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.1 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.2 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.4 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.5 }}</td>
+              <td class="border-2 border-gray-400 p-2">
+                <div class="flex items-center justify-center">
+                  <span class="w-40">{{ voucher.6 }}</span>
+                  <button class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
+                </div>
+            </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p>Promo</p>
+  <div class="border-2 border-gray-400 p-6 rounded-lg space-y-4">
+    <div class="relative">
+      <table class="w-full text-left">
+        <tbody>
+          {% for promo in data_promo %}
+            <tr>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ promo.0 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ promo.1 }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
