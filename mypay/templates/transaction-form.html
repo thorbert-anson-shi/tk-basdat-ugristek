@@ -1,0 +1,57 @@
+{% load static %}
+<dialog class="centered-floating-modal p-10" id="transaction-modal">
+  <div class="flex flex-col justify-center items-center space-y-5">
+    <h1>Form</h1>
+    <p>{Placeholder: Nama User}</p>
+    <p>{Placeholder: Tanggal Transaksi}</p>
+    <p>{Placeholder: Saldo User}</p>
+    <label for="category-dropdown">Kategori Transaksi</label>
+    <select
+      name="kategori"
+      id="category-dropdown"
+      onchange="handleTypeChange(event)"
+    >
+      <option value="topup">Top Up MyPay</option>
+      <option value="pay">Bayar Transaksi</option>
+      <option value="transfer">Transfer MyPay</option>
+      <option value="withdraw">Withdrawal</option>
+    </select>
+    <form
+      id="input-form"
+      class="flex flex-col space-y-5 border-2 border-black w-full h-fit items-center justify-center p-5"
+    >
+      <template id="topup-template">
+        <div class="flex flex-row gap-2 items-center">
+          <label for="nominal-dropdown">Nominal</label>
+          <input type="text" name="nominal" id="nominal-dropdown" />
+        </div>
+        <button type="submit">Top Up</button>
+      </template>
+      <template id="pay-template">
+        <label for="jasa-dropdown">Pesanan Jasa</label>
+        <select name="jasa" id="jasa-dropdown"></select>
+        <button type="submit">Bayar</button>
+      </template>
+      <template id="transfer-template">
+        <label for="nomor-hp">No. HP</label>
+        <input type="text" name="nomor-hp" id="nomor-hp" />
+        <label for="nominal-dropdown">Nominal</label>
+        <input type="text" name="nominal" id="nominal-dropdown" />
+        <button type="submit">Transfer</button>
+      </template>
+      <template id="withdraw-template">
+        <select name="bank" id="bank-dropdown"></select>
+        <label for="account-no">No Rekening</label>
+        <input type="text" name="account-no" id="account-no" />
+        <label for="nominal">Nominal</label>
+        <input type="text" name="nominal" id="nominal" />
+        <button type="submit">Withdraw</button>
+      </template>
+    </form>
+    <button onclick="document.getElementById('transaction-modal').close()">
+      Close
+    </button>
+  </div>
+</dialog>
+
+<script src="{% static 'mypay/js/form-handler.js' %}"></script>
