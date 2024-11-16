@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Daftar Subkategori Jasa</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Daftar Subkategori Jasa</h1>
     <ul>
-        {% for item in subkategori %}
-        <li>
-            <a href="{% url 'subkategori_detail' item.id %}">{{ item.nama_subkategori }}</a>
-        </li>
-        {% endfor %}
+      {% for item in subkategori %}
+      <li>
+        <a href="{% url 'subkategori_detail' item.id %}"
+          >{{ item.nama_subkategori }}</a
+        >
+      </li>
+      {% endfor %}
     </ul>
-</body>
+  </body>
 </html>

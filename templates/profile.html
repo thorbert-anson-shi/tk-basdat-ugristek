@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+    {% comment %}
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    {% endcomment %}
+  </head>
+  <body>
+    <include>navbar.html</include>
+
+    <div class="profile-container">
+      <h1>Profile</h1>
+
+      <div class="profile-info">
+        <p><strong>Nama:</strong> {{ profile.nama }}</p>
+        <p><strong>Nomor HP:</strong> {{ profile.no_hp }}</p>
+        <p><strong>Email:</strong> {{ profile.email }}</p>
+        <p><strong>Jenis Kelamin:</strong> {{ profile.jenis_kelamin }}</p>
+        <p><strong>Tanggal Lahir:</strong> {{ profile.tanggal_lahir }}</p>
+        <p><strong>Alamat:</strong> {{ profile.alamat }}</p>
+
+        {% if profile.role == 'pekerja' %}
+        <!-- Display data specific to 'pekerja' -->
+        <p><strong>NPWP:</strong> {{ profile.npwp }}</p>
+        <p><strong>Nama Bank:</strong> {{ profile.nama_bank }}</p>
+        <p><strong>No Rekening:</strong> {{ profile.no_rekening }}</p>
+        <p>
+          <strong>Profile Photo:</strong>
+          <img src="{{ profile.url_foto }}" alt="Profile Photo" width="100" />
+        </p>
+        {% endif %}
+      </div>
+    </div>
+
+    <footer>
+      <p>&copy; 2024 MyApp</p>
+    </footer>
+  </body>
+</html>

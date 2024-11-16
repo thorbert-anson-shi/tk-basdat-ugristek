@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Navbar</title>
+    {% comment %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    {% endcomment %}
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      .navbar {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+      }
+
+      .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar-menu {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        gap: 20px;
+      }
+
+      .navbar-menu .nav-item {
+        color: white;
+        text-decoration: none;
+      }
+
+      .navbar-menu .nav-item:hover {
+        text-decoration: underline;
+      }
+
+      .user-name {
+        color: white;
+        font-size: 1rem;
+        margin-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        {% comment %} <a href="/" class="logo">Logo</a> {% endcomment %}
+        <ul class="navbar-menu">
+          {% if request.session.user %}
+
+          <li><a href="/" class="nav-item">Homepage</a></li>
+          <li><a href="/mypay/" class="nav-item">MyPay</a></li>
+          <li><a href="/myorders/" class="nav-item">Kelola Pesanan Saya</a></li>
+          <li><a href="/discounts/" class="nav-item">Diskon</a></li>
+          <li><a href="../profile/" class="nav-item">Profile</a></li>
+          <li><a href="../logout" class="nav-item">Logout</a></li>
+          <li>
+            <span class="user-name"
+              >Hello, {{ request.session.user.nama }}</span
+            >
+          </li>
+          {% else %}
+          <li><a href="../login" class="nav-item">Login</a></li>
+          <li><a href="../register" class="nav-item">Register</a></li>
+          <li><span class="user-name">Hello, Guest</span></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+
+    <div class="content">
+      {% block content %}
+      <!-- Content from other templates will be rendered here -->
+      {% endblock %}
+    </div>
+  </body>
+</html>
