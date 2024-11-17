@@ -14,21 +14,68 @@
     <div class="relative">
       <table class="w-full text-left">
         <tbody>
+          <tr data_kode_voucher="VOUC1000" data_hari_berlaku="30" data_kuota_penggunaan="100" data_harga="50000">
+            <td class="border-2 border-gray-400 p-2 text-center">VOUC1000</td>
+            <td class="border-2 border-gray-400 p-2 text-center">300000</td>
+            <td class="border-2 border-gray-400 p-2 text-center">3000000</td>
+            <td class="border-2 border-gray-400 p-2 text-center">30</td>
+            <td class="border-2 border-gray-400 p-2 text-center">100</td>
+            <td class="border-2 border-gray-400 p-2">
+              <div class="flex items-center justify-center">
+                <span class="w-40">50000</span>
+                <button class="tombolBeli bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
+              </div>
+            </td>
+          </tr>
+
+          <tr data_kode_voucher="VOUC1001" data_hari_berlaku="60" data_kuota_penggunaan="200" data_harga="100000">
+            <td class="border-2 border-gray-400 p-2 text-center">VOUC1001</td>
+            <td class="border-2 border-gray-400 p-2 text-center">500000</td>
+            <td class="border-2 border-gray-400 p-2 text-center">5000000</td>
+            <td class="border-2 border-gray-400 p-2 text-center">60</td>
+            <td class="border-2 border-gray-400 p-2 text-center">200</td>
+            <td class="border-2 border-gray-400 p-2">
+              <div class="flex items-center justify-center">
+                <span class="w-40">100000</span>
+                <button class="tombolBeli bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
+              </div>
+            </td>
+          </tr>
+
+          <tr data_kode_voucher="VOUC1002" data_hari_berlaku="45" data_kuota_penggunaan="150" data_harga="150000">
+            <td class="border-2 border-gray-400 p-2 text-center">VOUC1002</td>
+            <td class="border-2 border-gray-400 p-2 text-center">750000</td>
+            <td class="border-2 border-gray-400 p-2 text-center">7500000</td>
+            <td class="border-2 border-gray-400 p-2 text-center">45</td>
+            <td class="border-2 border-gray-400 p-2 text-center">150</td>
+            <td class="border-2 border-gray-400 p-2">
+              <div class="flex items-center justify-center">
+                <span class="w-40">150000</span>
+                <button class="tombolBeli bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
+              </div>
+            </td>
+          </tr>
+          
+          {% comment %} 
+          Tambahkan ini saat TK3.
+
           {% for voucher in data_voucher%}
             <tr>
-              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.0 }}</td>
-              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.1 }}</td>
-              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.2 }}</td>
-              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.4 }}</td>
-              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.5 }}</td>
-              <td class="border-2 border-gray-400 p-2">
+              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.0 }}</td> -->
+              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.1 }}</td> -->
+              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.2 }}</td> -->
+              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.4 }}</td> -->
+              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.5 }}</td> -->
+              <!-- <td class="border-2 border-gray-400 p-2">
                 <div class="flex items-center justify-center">
                   <span class="w-40">{{ voucher.6 }}</span>
                   <button class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
                 </div>
-            </td>
+              </td> -->
             </tr>
-          {% endfor %}
+          {% endfor %} 
+          {% endcomment %}
+          
         </tbody>
       </table>
     </div>
@@ -39,15 +86,140 @@
     <div class="relative">
       <table class="w-full text-left">
         <tbody>
+          
+          <tr>
+            <td class="border-2 border-gray-400 p-2 text-center">PROM1002</td>
+            <td class="border-2 border-gray-400 p-2 text-center">2024-12-11</td>
+          </tr>
+          
+          <tr>
+            <td class="border-2 border-gray-400 p-2 text-center">PROM1005</td>
+            <td class="border-2 border-gray-400 p-2 text-center">2024-12-14</td>
+          </tr>
+
+          <tr>
+            <td class="border-2 border-gray-400 p-2 text-center">PROM1007</td>
+            <td class="border-2 border-gray-400 p-2 text-center">2024-12-16</td>
+          </tr>
+
+          {% comment %} 
+          Tambahkan ini saat TK3.
+
           {% for promo in data_promo %}
             <tr>
               <td class="border-2 border-gray-400 p-2 text-center">{{ promo.0 }}</td>
               <td class="border-2 border-gray-400 p-2 text-center">{{ promo.1 }}</td>
             </tr>
-          {% endfor %}
+          {% endfor %} {% endcomment %}
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
+<!-- Modal pop up -->
+<div id="modalSukses" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col justify-between">
+        <!-- Header -->
+        <h2 class="text-lg font-semibold text-center mb-4">SUKSES</h2>
+        
+        <!-- Modal Content -->
+        <p id="modalContent" class="text-center flex-grow">Selamat! Anda berhasil membeli voucher kode <strong>XXX</strong>. Voucher ini berlaku hingga tanggal <strong>XX/XX/XXXX</strong> dengan kuota penggunaan sebanyak <strong>X</strong> kali.</p>
+        
+        <!-- Close Button at the bottom -->
+        <button id="tombolTutupSukses" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0 mt-4">
+            Tutup
+        </button>
+    </div>
+</div>
+
+<div id="modalGagal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col justify-between">
+        <!-- Header -->
+        <h2 class="text-lg font-semibold text-center mb-4">GAGAL</h2>
+        
+        <!-- Modal Content -->
+        <p class="text-center flex-grow">Maaf, saldo Anda tidak cukup untuk membeli voucher ini.</p>
+        
+        <!-- Tombol tutup di bawah -->
+        <button id="tombolTutupGagal" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0 mt-4">
+            Tutup
+        </button>
+    </div>
+</div>
+
+<script>
+  // Ambil elemen modal sukses
+  const modalSukses = document.getElementById("modalSukses");
+
+  // Ambil elemen modal gagal
+  const modalGagal = document.getElementById("modalGagal");
+
+  // Ambil tombol-tombol beli dengan class "tombolBeli"
+  const tombolBeliButtons = document.querySelectorAll(".tombolBeli");
+
+  // Ambil tombol yang memiliki id tombolTutupSukses dan tombolTutupGagal
+
+  const tombolTutupSukses = document.getElementById("tombolTutupSukses");
+  const tombolTutupGagal = document.getElementById("tombolTutupGagal");
+
+  // Ambil elemen untuk menampilkan konten di dalam modal
+  const modalContent = document.getElementById("modalContent");
+
+  // Simulasikan saldo pengguna (misalnya 50000)
+  const saldoPengguna = 50000;
+
+  // Saat pengguna tekan salah satu tombol "Beli Voucher", munculkan modal ke layar.
+  tombolBeliButtons.forEach(button => {
+    button.onclick = function() {
+      // Menangkap baris (tr) dari tombol yang diklik
+      const row = button.closest("tr");
+      
+      // Mengambil data dari atribut data-* di baris
+      const kodeVoucher = row.getAttribute("data_kode_voucher");
+      const hargaBeliVoucher = parseInt(row.getAttribute("data_harga"), 10); // Harga voucher di kolom kedua
+      const hariBerlaku = parseInt(row.getAttribute("data_hari_berlaku"), 10);
+      const kuotaPenggunaan = parseInt(row.getAttribute("data_kuota_penggunaan"), 10);
+      
+      // Cek jika saldo cukup
+      if (saldoPengguna >= hargaBeliVoucher) {
+        // Hitung tanggal kedaluwarsa
+        const tanggalKedaluwarsa = new Date();
+        tanggalKedaluwarsa.setDate(tanggalKedaluwarsa.getDate() + hariBerlaku); // Menambahkan validity ke tanggal saat ini
+        
+        // Format tanggal kedaluwarsa
+        const tanggalKedaluwarsaFid = tanggalKedaluwarsa.toLocaleDateString("id-ID"); // Format ID date (dd/mm/yyyy)
+
+        // Update konten modal dengan data yang diambil
+        modalContent.innerHTML = `Selamat! Anda berhasil membeli voucher kode <strong>${kodeVoucher}</strong>. Voucher ini berlaku hingga tanggal <strong>${tanggalKedaluwarsaFid}</strong> dengan kuota penggunaan sebanyak <strong>${kuotaPenggunaan}</strong> kali.`;
+        
+        // Tampilkan modal sukses
+        modalSukses.classList.remove("hidden");
+      } else {
+        // Jika saldo tidak cukup, tampilkan modal gagal
+        modalGagal.classList.remove("hidden");
+      }
+    };
+  });
+  
+
+  // Saat pengguna tekan tombol "Tutup" pada modal sukses atau gagal, sembunyikan modal dari layar.
+  tombolTutupSukses.onclick = function() {
+    modalSukses.classList.add("hidden");
+  };
+
+  tombolTutupGagal.onclick = function() {
+    modalGagal.classList.add("hidden");
+  };
+
+  // Saat pengguna klik bagian di luar modal, sembunyikan modal dari layar.
+  window.onclick = function(event) {
+    if (event.target === modalSukses) {
+      modalSukses.classList.add("hidden");
+    }
+    if (event.target === modalGagal) {
+      modalGagal.classList.add("hidden");
+    }
+  };
+</script>
 {% endblock content %}
