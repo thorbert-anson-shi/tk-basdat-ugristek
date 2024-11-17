@@ -5,22 +5,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'homepage' %}">Sijarta</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <!-- Sertakan Navbar -->
+    {% include 'navbar.html' %}
 
     <div class="container mt-4">
         <h1>Selamat Datang di Sijarta</h1>
@@ -31,8 +17,8 @@
                 <select id="kategori" name="kategori" class="form-select">
                     <option value="">Semua Kategori</option>
                     {% for kategori in kategori_jasa %}
-                        <option value="{{ kategori.0 }}" {% if selected_kategori == kategori.0|stringformat:"s" %}selected{% endif %}>
-                            {{ kategori.1 }}
+                        <option value="{{ kategori.id }}" {% if selected_kategori == kategori.id|stringformat:"s" %}selected{% endif %}>
+                            {{ kategori.nama_kategori }}
                         </option>
                     {% endfor %}
                 </select>
@@ -53,10 +39,17 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h5 class="card-title">{{ subkategori.1 }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ subkategori.3 }}</h6>
-                            <p class="card-text">{{ subkategori.2 }}</p>
-                            <a href="{% url 'subkategori_jasa_pelanggan' subkategori.0 %}" class="btn btn-primary">Lihat Detail</a>
+                            <h5 class="card-title">{{ subkategori.nama_subkategori }}</h5>
+                            <!-- Jika Anda ingin menampilkan nama kategori, Anda perlu mengambilnya berdasarkan kategori_jasa_id -->
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {% for kategori in kategori_jasa %}
+                                    {% if kategori.id == subkategori.kategori_jasa_id %}
+                                        {{ kategori.nama_kategori }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h6>
+                            <p class="card-text">{{ subkategori.deskripsi }}</p>
+                            <a href="{% url 'subkategori_jasa_pelanggan' subkategori.id %}" class="btn btn-primary">Lihat Detail</a>
                         </div>
                     </div>
                 </div>
