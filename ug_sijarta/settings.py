@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "subkategori_jasa",
     "diskon",
     "mypay",
+    "pekerjaan_jasa",
     "authenticate",
 ]
 

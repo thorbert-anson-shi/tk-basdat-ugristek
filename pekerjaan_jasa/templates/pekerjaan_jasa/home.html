@@ -1,0 +1,58 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="w-[60vw] h-fit border-black border-2 flex flex-col p-5 space-y-5">
+  <form id="input-row" class="flex flex-row w-full justify-around">
+    <select
+      name="kategori"
+      id="kategori-dropdown"
+      oninput="handleCategoryChange(event.target.value)"
+      class="cursor-pointer p-2"
+    >
+      <option value="" selected disabled>Kategori</option>
+    </select>
+    <select
+      name="subkategori"
+      id="subkategori-dropdown"
+      oninput="handleSubcategoryChange(event.target.value)"
+      class="cursor-pointer p-2"
+    >
+      <option value="" selected>Pilih kategori</option>
+    </select>
+    <button
+      type="submit"
+      class="border-2 border-black p-2 hover:bg-neutral-100"
+    >
+      Search
+    </button>
+  </form>
+  <div
+    id="results"
+    class="grow border-2 border-black h-[60vh] overflow-y-scroll"
+  >
+    <template id="result-template">
+      <div class="w-full flex flex-row items-center justify-between p-5">
+        <div class="grow-[2] flex flex-col">
+          <div id="row-1" class="flex flex-row">
+            <p
+              id="subkategori-pesanan"
+              class="w-1/2 text-ellipsis text-left border-r-2 border-black"
+            ></p>
+            <p id="nama-pelanggan" class="grow text-left"></p>
+          </div>
+          <div id="row-2" class="flex flex-row space-x-5">
+            <p id="tanggal-pemesanan" class="w-1/2 text-right"></p>
+            <p id="tanggal-pekerjaan" class="grow text-left"></p>
+          </div>
+        </div>
+        <p id="biaya"></p>
+        <button class="border-2 border-black p-2">Kerjakan Pesanan</button>
+      </div>
+    </template>
+  </div>
+</div>
+
+<template id="option-template">
+  <option value=""></option>
+</template>
+
+<script src="{% static 'pekerjaan_jasa/js/home.js' %}"></script>
+{% endblock content %}
