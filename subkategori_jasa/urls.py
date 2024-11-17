@@ -9,5 +9,4 @@ urlpatterns = [
     path('profil_pekerja/<uuid:pekerja_id>/', views.profil_pekerja, name='pekerja_profil'),
     path('view_pemesanan_jasa/', views.view_pemesanan_jasa, name='view_pemesanan_jasa'),
     path('batalkan_pemesanan_jasa/<uuid:pemesanan_id>/', views.batalkan_pemesanan_jasa, name='batalkan_pemesanan_jasa'),
-
 ]
