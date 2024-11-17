@@ -24,4 +24,5 @@ urlpatterns = [
     path("diskon/", include("diskon.urls")),
     path('subkategori_jasa/', include('subkategori_jasa.urls')),
     path("mypay/", include("mypay.urls")),
+    path("", include("authenticate.urls")),
 ]

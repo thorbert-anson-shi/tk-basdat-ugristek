@@ -2,18 +2,21 @@ from django.shortcuts import render
 from django.db import connection
 from django.contrib.auth.decorators import login_required
 
+
 # @login_required
 def homepage(request):
-    kategori_filter = request.GET.get('kategori')
-    search_subkategori = request.GET.get('search')
+    kategori_filter = request.GET.get("kategori")
+    search_subkategori = request.GET.get("search")
 
     with connection.cursor() as cursor:
         # Query untuk mengambil semua kategori jasa
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT Id, Nama
             FROM KATEGORI_JASA
             ORDER BY Nama;
-        """)
+        """
+        )
         kategori_jasa = cursor.fetchall()
 
         # Query untuk mengambil subkategori jasa dengan filter jika ada
@@ -38,10 +41,14 @@ def homepage(request):
         subkategori_jasa = cursor.fetchall()
 
     context = {
-        'kategori_jasa': kategori_jasa,
-        'subkategori_jasa': subkategori_jasa,
-        'selected_kategori': kategori_filter,
-        'search_subkategori': search_subkategori,
+        "kategori_jasa": kategori_jasa,
+        "subkategori_jasa": subkategori_jasa,
+        "selected_kategori": kategori_filter,
+        "search_subkategori": search_subkategori,
     }
 
-    return render(request, 'main/homepage.html', context)
+    return render(request, "main/homepage.html", context)
+
+
+def navbar(request):
+    return render(request, "navbar.html")
