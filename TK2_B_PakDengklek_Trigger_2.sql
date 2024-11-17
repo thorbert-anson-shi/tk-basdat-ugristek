@@ -38,3 +38,4 @@ CREATE TRIGGER trg_handle_order_cancellation
 AFTER UPDATE ON TR_PEMESANAN_STATUS
 FOR EACH ROW
 EXECUTE FUNCTION handle_order_cancellation();
+

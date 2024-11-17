@@ -891,6 +891,9 @@ def batalkan_pemesanan_jasa(request, pemesanan_id):
 #         return redirect('subkategori_jasa:view_pemesanan_jasa')
 #     else:
 #         return HttpResponseForbidden("Metode tidak diizinkan.")
+
+def show_form_testimoni(request):
+    return render(request, "form_testimoni.html")
     
 '''
 Fungsi untuk mengembalikan saldo MyPay saat pemesanan dibatalkan
