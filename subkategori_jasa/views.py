@@ -25,7 +25,7 @@ def get_user_role(user_id):
         return 'unknown'
 
 # Untuk bagian PELANGGAN
-@login_required
+# @login_required
 def subkategori_jasa_pelanggan(request, subkategori_id):
     user_role = get_user_role(request.user.id)
     if user_role != 'pelanggan':
@@ -97,7 +97,7 @@ def subkategori_jasa_pelanggan(request, subkategori_id):
     return render(request, 'subkategori_jasa/pelanggan.html', context)
 
 # Untuk bagian PEKERJA
-@login_required
+# @login_required
 def subkategori_jasa_pekerja(request, subkategori_id):
     user_role = get_user_role(request.user.id)
     if user_role != 'pekerja':
@@ -202,7 +202,7 @@ def subkategori_jasa_pekerja(request, subkategori_id):
     return render(request, 'subkategori_jasa/pekerja.html', context)
 
 # Untuk Button Bergabung bagi PEKERJA
-@login_required
+# @login_required
 def bergabung_kategori_jasa(request, subkategori_id):
     user_role = get_user_role(request.user.id)
     if user_role != 'pekerja':
@@ -232,7 +232,7 @@ def bergabung_kategori_jasa(request, subkategori_id):
     
     return redirect('subkategori_jasa_pekerja', subkategori_id=subkategori_id)
 
-@login_required
+# @login_required
 def buat_pemesanan_jasa(request):
     user_role = get_user_role(request.user.id)
     if user_role != 'pelanggan':
@@ -346,7 +346,7 @@ def buat_pemesanan_jasa(request):
     else:
         return HttpResponseForbidden("Metode tidak diizinkan.")
 
-@login_required
+# @login_required
 def profil_pekerja(request, pekerja_id):
     with connection.cursor() as cursor:
         # Mengambil informasi pekerja
@@ -376,7 +376,7 @@ def profil_pekerja(request, pekerja_id):
 
     return render(request, 'subkategori_jasa/profil_pekerja.html', context)
 
-@login_required
+# @login_required
 def view_pemesanan_jasa(request):
     user_role = get_user_role(request.user.id)
     if user_role != 'pelanggan':
@@ -423,7 +423,7 @@ def view_pemesanan_jasa(request):
     return render(request, 'subkategori_jasa/view_pemesanan_jasa.html', context)
 
 
-@login_required
+# @login_required
 def batalkan_pemesanan_jasa(request, pemesanan_id):
     user_role = get_user_role(request.user.id)
     if user_role != 'pelanggan':
@@ -461,3 +461,39 @@ def batalkan_pemesanan_jasa(request, pemesanan_id):
         return redirect('subkategori_jasa:view_pemesanan_jasa')
     else:
         return HttpResponseForbidden("Metode tidak diizinkan.")
+    
+'''
+Fungsi untuk mengembalikan saldo MyPay saat pemesanan dibatalkan
+
+CREATE OR REPLACE FUNCTION handle_order_cancellation() RETURNS TRIGGER 
+AS $$
+DECLARE
+    pelanggan_id UUID;
+    total_biaya NUMERIC;
+    id_status_dibatalkan INTEGER;
+    id_status_mencari_pekerja INTEGER;
+BEGIN
+    SELECT Id INTO id_status_dibatalkan FROM STATUS_PESANAN WHERE Keterangan = 'Dibatalkan';
+    SELECT Id INTO id_status_mencari_pekerja FROM STATUS_PESANAN WHERE Keterangan = 'Mencari Pekerja Terdekat';
+    
+    IF NEW.IdStatus = id_status_dibatalkan THEN
+        IF OLD.IdStatus = id_status_mencari_pekerja THEN
+            SELECT IdPelanggan, TotalBiaya INTO pelanggan_id, total_biaya
+            FROM TR_PEMESANAN_JASA
+            WHERE Id = NEW.IdTrPemesanan;
+            
+            UPDATE MYPAY
+            SET Saldo = Saldo + total_biaya
+            WHERE Id = pelanggan_id;
+        END IF;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_handle_order_cancellation
+AFTER UPDATE ON TR_PEMESANAN_STATUS
+FOR EACH ROW
+EXECUTE FUNCTION handle_order_cancellation();
+'''

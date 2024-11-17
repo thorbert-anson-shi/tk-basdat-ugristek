@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.db import connection
 from django.contrib.auth.decorators import login_required
 
-@login_required
+# @login_required
 def homepage(request):
     kategori_filter = request.GET.get('kategori')
     search_subkategori = request.GET.get('search')
