@@ -12,7 +12,9 @@ DUMMY_PENGGUNA = [
         "no_hp": "08123456789",
         "tanggal_lahir": "1995-06-15",
         "alamat": "Jl. Contoh No. 1",
-        "role:": "pengguna"
+        "role": "pengguna",
+        "saldo_mypay": 1000000
+
     },
     {
         "nama": "Pengguna 2",
@@ -21,7 +23,8 @@ DUMMY_PENGGUNA = [
         "no_hp": "08198765432",
         "tanggal_lahir": "1990-03-22",
         "alamat": "Jl. Contoh No. 2",
-        "role:": "pengguna"
+        "role": "pengguna",
+        "saldo_mypay": 1000000
     }
 ]
 
@@ -38,7 +41,9 @@ DUMMY_PEKERJA = [
         "nama_bank": "GoPay",
         "no_rekening": "9876543210",
         "url_foto": "https://example.com/images/worker1.jpg",  # URL foto pekerja
-        "role:": "pekerja"
+        "role": "pekerja",
+        "rating": 4.5,
+        "saldo_mypay": 1000000
     },
     {
         "nama": "Pekerja 2",
@@ -51,7 +56,10 @@ DUMMY_PEKERJA = [
         "nama_bank": "OVO",
         "no_rekening": "1234567890",
         "url_foto": "https://example.com/images/worker2.jpg",  # URL foto pekerja
-        "role:": "pekerja"
+        "role": "pekerja",
+        "rating": 4.5,
+        "saldo_mypay": 1000000
+        
     }
 ]
 
@@ -85,7 +93,7 @@ def login(request):
         if user:
             # Simpan informasi user di session atau cookie
             request.session['user'] = user  # Simpan data pengguna di session
-            return redirect('/')  # Redirect ke halaman utama setelah login
+            return redirect('navbar')  # Redirect ke halaman utama setelah login
         else:
             error_message = "No HP atau password salah"
             return render(request, 'authenticate/login.html', {'error_message': error_message})
@@ -187,7 +195,6 @@ def profile(request):
 
     context = {
         'profile': user,
-        'role': role,
     }
 
     return render(request, 'profile.html', context)

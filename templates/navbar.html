@@ -1,84 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Navbar</title>
-    {% comment %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    {% endcomment %}
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-      }
+{% extends "base.html" %} {% block content %}
+<nav class="navbar fixed top-0 left-0 w-full bg-gray-800 text-white shadow-lg">
+  <div
+    class="navbar-container px-4 py-3 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2"
+  >
+    {% if request.session.user %}
+    <a
+      href="/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Homepage
+    </a>
+    <a
+      href="/mypay/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      MyPay
+    </a>
+    <a
+      href="/myorders/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Kelola Pesanan Saya
+    </a>
+    <a
+      href="/discounts/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Diskon
+    </a>
+    <a
+      href="../profile/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Profile
+    </a>
+    <a
+      href="../logout"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Logout
+    </a>
+    <span class="user-name text-center col-span-full mt-2 md:mt-0">
+      Hello, {{ request.session.user.nama }}, {{ request.session.user.role }}
+    </span>
+    {% else %}
+    <a
+      href="../login"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Login
+    </a>
+    <a
+      href="../register"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Register
+    </a>
+    <span class="user-name text-center col-span-full mt-2"> Hello, Guest </span>
+    {% endif %}
+  </div>
+</nav>
 
-      .navbar {
-        background-color: #333;
-        color: white;
-        padding: 10px 20px;
-      }
-
-      .navbar-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .navbar-menu {
-        list-style-type: none;
-        padding: 0;
-        display: flex;
-        gap: 20px;
-      }
-
-      .navbar-menu .nav-item {
-        color: white;
-        text-decoration: none;
-      }
-
-      .navbar-menu .nav-item:hover {
-        text-decoration: underline;
-      }
-
-      .user-name {
-        color: white;
-        font-size: 1rem;
-        margin-left: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="navbar-container">
-        {% comment %} <a href="/" class="logo">Logo</a> {% endcomment %}
-        <ul class="navbar-menu">
-          {% if request.session.user %}
-
-          <li><a href="/" class="nav-item">Homepage</a></li>
-          <li><a href="/mypay/" class="nav-item">MyPay</a></li>
-          <li><a href="/myorders/" class="nav-item">Kelola Pesanan Saya</a></li>
-          <li><a href="/discounts/" class="nav-item">Diskon</a></li>
-          <li><a href="../profile/" class="nav-item">Profile</a></li>
-          <li><a href="../logout" class="nav-item">Logout</a></li>
-          <li>
-            <span class="user-name"
-              >Hello, {{ request.session.user.nama }}</span
-            >
-          </li>
-          {% else %}
-          <li><a href="../login" class="nav-item">Login</a></li>
-          <li><a href="../register" class="nav-item">Register</a></li>
-          <li><span class="user-name">Hello, Guest</span></li>
-          {% endif %}
-        </ul>
-      </div>
-    </nav>
-
-    <div class="content">
-      {% block content %}
-      <!-- Content from other templates will be rendered here -->
-      {% endblock %}
-    </div>
-  </body>
-</html>
+<div class="content mt-16">
+  {% block additional_content %}
+  <!-- Additional content can be added here -->
+  {% endblock additional_content %}
+</div>
+{% endblock content %}
