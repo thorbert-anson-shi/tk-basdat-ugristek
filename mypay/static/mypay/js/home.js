@@ -57,9 +57,9 @@ function renderTransactions() {
   transactions.forEach((transaction) => {
     let clone = template.content.cloneNode(true);
 
-    nominalP = clone.querySelector("#nominal");
-    tanggalP = clone.querySelector("#tanggal");
-    kategoriP = clone.querySelector("#kategori");
+    let nominalP = clone.querySelector("#nominal");
+    let tanggalP = clone.querySelector("#tanggal");
+    let kategoriP = clone.querySelector("#kategori");
 
     nominalP.innerHTML = transaction.nominal;
     tanggalP.innerHTML = transaction.tanggal;
