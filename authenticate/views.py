@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import Http404
+from django.views.decorators.csrf import csrf_exempt
 
 # Variabel global untuk menyimpan data dummy
 # Dummy data untuk Pengguna
@@ -13,8 +14,7 @@ DUMMY_PENGGUNA = [
         "tanggal_lahir": "1995-06-15",
         "alamat": "Jl. Contoh No. 1",
         "role": "pengguna",
-        "saldo_mypay": 1000000
-
+        "saldo_mypay": 1000000,
     },
     {
         "nama": "Pengguna 2",
@@ -24,7 +24,7 @@ DUMMY_PENGGUNA = [
         "tanggal_lahir": "1990-03-22",
         "alamat": "Jl. Contoh No. 2",
         "role": "pengguna",
-        "saldo_mypay": 1000000
+        "saldo_mypay": 1000000,
     }
 ]
 
@@ -40,7 +40,7 @@ DUMMY_PEKERJA = [
         "npwp": "123456789012345",
         "nama_bank": "GoPay",
         "no_rekening": "9876543210",
-        "url_foto": "https://example.com/images/worker1.jpg",  # URL foto pekerja
+        "url_foto": "https://csui2023.github.io/pfp/thorbert-anson-shi.jpg",  # URL foto pekerja
         "role": "pekerja",
         "rating": 4.5,
         "saldo_mypay": 1000000
@@ -198,3 +198,60 @@ def profile(request):
     }
 
     return render(request, 'profile.html', context)
+
+
+@csrf_exempt
+def updateProfile(request):
+    user = request.session.get('user', None)
+    if not user:
+        raise Http404("User not logged in")  # Pengguna harus login terlebih dahulu
+
+    if(request.method == 'POST'):
+        if(user['role'] == 'pengguna'):
+            user['nama'] = request.POST.get('nama')
+            user['jenis_kelamin'] = request.POST.get('jenis_kelamin')
+            user['no_hp'] = request.POST.get('no_hp')
+            user['tanggal_lahir'] = request.POST.get('tanggal_lahir')
+            user['alamat'] = request.POST.get('alamat')
+        else:
+            user['nama'] = request.POST.get('nama')
+            user['jenis_kelamin'] = request.POST.get('jenis_kelamin')
+            user['no_hp'] = request.POST.get('no_hp')
+            user['tanggal_lahir'] = request.POST.get('tanggal_lahir')
+            user['alamat'] = request.POST.get('alamat')
+            user['nama_bank'] = request.POST.get('nama_bank')
+            user['npwp'] = request.POST.get('npwp')
+            user['no_rekening'] = request.POST.get('no_rekening')
+            user['url_foto'] = request.POST.get('url_foto')
+        return redirect('profile')
+    
+    context = {
+        'profile': user,
+    }
+    
+    return render(request, 'updateProfile.html', context)
+
+# Trigger dan Stored Procedure Danniel Kuning
+# CREATE OR REPLACE FUNCTION check_phone_number() RETURNS TRIGGER AS $$
+# BEGIN
+#     IF (EXISTS (SELECT * FROM users WHERE NoHP = NEW.NoHP)) THEN
+#         RAISE EXCEPTION 'Nomor telepon sudah terdaftar!';
+#     END IF;
+#     RETURN NEW;
+# END;
+# $$ LANGUAGE plpgsql;
+
+# CREATE TRIGGER check_phone_number BEFORE INSERT OR UPDATE ON users 
+# FOR EACH ROW EXECUTE FUNCTION check_phone_number();
+
+# CREATE OR REPLACE FUNCTION check_bank_account() RETURNS TRIGGER AS $$
+# BEGIN
+#     IF (EXISTS (SELECT * FROM pekerja WHERE NomorRekening = NEW.NomorRekening AND NamaBank = NEW.NamaBank)) THEN
+#         RAISE EXCEPTION 'Nomor rekening dan Nama bank sudah terdaftar!';
+#     END IF;
+#     RETURN NEW;
+# END;
+# $$ LANGUAGE plpgsql;
+
+# CREATE TRIGGER check_bank_account BEFORE INSERT OR UPDATE ON pekerja 
+# FOR EACH ROW EXECUTE FUNCTION check_bank_account();
