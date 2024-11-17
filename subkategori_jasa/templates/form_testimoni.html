@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block meta %} 
+  <title>Form Testimoni | Sijarta</title>
+{% endblock meta %}
+{% block content %}
+<div class="min-h-screen flex flex-col items-center justify-center p-4">
+  <h2 class="text-2xl font-semibold mb-6">Form</h2>
+
+  <!-- Rating Section -->
+  <p class="text-lg mb-4">
+    Rating: 
+    <select class="rating-dropdown border border-gray-300 rounded p-2">
+      <option value="10">10</option>
+      <option value="9">9</option>
+      <option value="8">8</option>
+      <option value="7">7</option>
+      <option value="6">6</option>
+      <option value="5">5</option>
+      <option value="4">4</option>
+      <option value="3">3</option>
+      <option value="2">2</option>
+      <option value="1">1</option>
+    </select>
+  </p>
+
+  <!-- Comment Section -->
+  <p class="text-lg mb-4">Komentar: </p>
+  <textarea rows="4" cols="50" class="border border-gray-300 rounded p-2 mb-6"></textarea>
+
+  <!-- Submit Button -->
+  <button class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none mb-4">
+    Submit
+  </button>
+</div>
+{% endblock content %}

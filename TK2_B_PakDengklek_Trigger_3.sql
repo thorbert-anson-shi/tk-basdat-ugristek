@@ -1,6 +1,6 @@
 -- -----------------------------------------------------
 -- Fungsi: pembatasan_penggunaan
--- Deskripsi: Memeriksa validitas voucher sebelum penggunaannya.
+-- Deskripsi:
 --            - Memastikan voucher tidak kedaluwarsa.
 --            - Memastikan voucher masih memiliki kuota penggunaan.
 --            - Mengurangi kuota penggunaan jika voucher valid.

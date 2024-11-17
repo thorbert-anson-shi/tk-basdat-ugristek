@@ -9,4 +9,8 @@ urlpatterns = [
     path('profil_pekerja/<uuid:pekerja_id>/', views.profil_pekerja, name='pekerja_profil'),
     path('view_pemesanan_jasa/', views.view_pemesanan_jasa, name='view_pemesanan_jasa'),
     path('batalkan_pemesanan_jasa/<uuid:pemesanan_id>/', views.batalkan_pemesanan_jasa, name='batalkan_pemesanan_jasa'),
+
+    # TODO: Remove the first line and apply the next line.
+    path('form_testimoni/', views.show_form_testimoni, name='form_testimoni'),
+    # path('form_testimoni/<uuid:subkategori_id>/', views.show_form_testimoni, name='form_testimoni'),
 ]
