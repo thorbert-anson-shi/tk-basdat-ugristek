@@ -50,6 +50,5 @@ def homepage(request):
     return render(request, "main/homepage.html", context)
 
 
-# Create your views here.
 def navbar(request):
     return render(request, "navbar.html")
