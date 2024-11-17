@@ -9,5 +9,6 @@ urlpatterns = [
     path("register/pekerja/", register_pekerja, name="register_pekerja"),
     path("register/", register, name="register"),
     path("navbar/", navbar, name="navbar"),
-     path('profile/', profile, name='profile'),
+    path('profile/', profile, name='profile'),
+    path('profile/edit/', updateProfile, name='edit_profile'),
 ]
