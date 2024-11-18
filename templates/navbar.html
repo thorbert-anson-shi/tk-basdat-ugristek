@@ -2,7 +2,7 @@
   <div
     class="navbar-container w-full px-4 py-3 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2"
   >
-    {% if request.session.user %}
+    {% if request.session.user.role == 'pengguna' %}
     <a
       href="/"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
@@ -26,6 +26,46 @@
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Diskon
+    </a>
+    <a
+      href="/profile/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Profile
+    </a>
+    <a
+      href="/logout"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Logout
+    </a>
+    <span class="user-name text-center col-span-full mt-2 md:mt-0">
+      Hello, {{ request.session.user.nama }}, {{ request.session.user.role }}
+    </span>
+    {% elif request.session.user.role == 'pekerja' %}
+    <a
+      href="/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Homepage
+    </a>
+    <a
+      href="/mypay/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      MyPay
+    </a>
+    <a
+      href="/pekerjaan_jasa/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Kelola Pekerjaan Saya
+    </a>
+    <a
+      href="/pekerjaan_jasa/list"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Kelola Status Pekerjaan
     </a>
     <a
       href="/profile/"
