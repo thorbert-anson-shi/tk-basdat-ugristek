@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["tk-basdat-ugristek-production.up.railway.app"]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,6 +40,8 @@ INSTALLED_APPS = [
     "subkategori_jasa",
     "diskon",
     "mypay",
+    "pekerjaan_jasa",
+    "authenticate",
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Pengguna</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      {% if profile.role == "pengguna" %}
+      <!-- Tampilan untuk Pengguna -->
+      <h2 class="text-2xl font-bold mb-4 text-gray-700">Profile Pengguna</h2>
+
+      <div class="space-y-4">
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Nama:</span> {{ profile.nama }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Jenis Kelamin:</span>
+            {{ profile.jenis_kelamin }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">No HP:</span> {{ profile.no_hp }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Tanggal lahir:</span>
+            {{ profile.tanggal_lahir }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Alamat:</span> {{ profile.alamat }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Saldo MyPay:</span>
+            {{ profile.saldo_mypay }}
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 text-right">
+        <button
+          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          onclick="window.location.href=`{% url 'edit_profile' %}`"
+        >
+          Update
+        </button>
+      </div>
+      {% elif profile.role == "pekerja" %}
+      <!-- Tampilan untuk Pekerja -->
+      <h2 class="text-2xl font-bold mb-4 text-gray-700">Profile Pekerja</h2>
+
+      <div class="space-y-4">
+        <div>
+          <img src="https://csui2023.github.io/pfp/thorbert-anson-shi.jpg" />
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Nama:</span> {{ profile.nama }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Jenis Kelamin:</span>
+            {{ profile.jenis_kelamin }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">No HP:</span> {{ profile.no_hp }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Tanggal lahir:</span>
+            {{ profile.tanggal_lahir }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Alamat:</span> {{ profile.alamat }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Saldo MyPay:</span>
+            {{ profile.saldo_mypay }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Nama Bank:</span>
+            {{ profile.nama_bank }}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Rekening Bank:</span>
+            {{ profile.no_rekening}}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">NPWP:</span>
+            {{ profile.npwp}}
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">
+            <span class="font-semibold">Rating:</span>
+            {{ profile.rating}}
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 text-right">
+        <button
+          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          onclick="window.location.href=`{% url 'edit_profile' %}`"
+        >
+          Update
+        </button>
+      </div>
+      {% endif %}
+    </div>
+
+    <footer class="mt-10 text-center text-gray-500">
+      <p>&copy; 2024 MyApp</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+    <h1>Selamat Datang di Sijarta</h1>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="kategori" class="form-label">Filter Kategori Jasa</label>
+            <select id="kategori" name="kategori" class="form-select">
+                <option value="">Semua Kategori</option>
+                {% for kategori in kategori_jasa %}
+                    <option value="{{ kategori.id }}" {% if selected_kategori == kategori.id|stringformat:"s" %}selected{% endif %}>
+                        {{ kategori.nama_kategori }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="search" class="form-label">Cari Subkategori Jasa</label>
+            <input type="text" id="search" name="search" class="form-control" 
+                    placeholder="Masukkan nama subkategori" value="{{ search_subkategori }}">
+        </div>
+        <div class="col-md-4 align-self-end">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{% url 'homepage' %}" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="row">
+        {% for subkategori in subkategori_jasa %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ subkategori.nama_subkategori }}</h5>
+                        <!-- Jika Anda ingin menampilkan nama kategori, Anda perlu mengambilnya berdasarkan kategori_jasa_id -->
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            {% for kategori in kategori_jasa %}
+                                {% if kategori.id == subkategori.kategori_jasa_id %}
+                                    {{ kategori.nama_kategori }}
+                                {% endif %}
+                            {% endfor %}
+                        </h6>
+                        <p class="card-text">{{ subkategori.deskripsi }}</p>
+                        <a href="{% url 'subkategori_jasa:subkategori_jasa_pelanggan' subkategori.id %}" class="btn btn-primary">Lihat Detail</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Tidak ada subkategori jasa yang ditemukan.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
