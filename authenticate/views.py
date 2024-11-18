@@ -96,7 +96,7 @@ def login(request):
         if user:
             # Simpan informasi user di session atau cookie
             request.session["user"] = user  # Simpan data pengguna di session
-            return redirect("navbar")  # Redirect ke halaman utama setelah login
+            return redirect("homepage")  # Redirect ke halaman utama setelah login
         else:
             error_message = "No HP atau password salah"
             return render(
@@ -202,8 +202,8 @@ def register(request):
     return render(request, "authenticate/register.html")
 
 
-def navbar(request):
-    return render(request, "navbar.html")
+# def navbar(request):
+#     return render(request, "navbar.html")
 
 
 def profile(request):

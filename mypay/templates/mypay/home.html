@@ -1,35 +1,34 @@
 {% extends 'base.html' %} {% load static %} {% block meta %}
 <link rel="stylesheet" href="{% static 'mypay/css/style.css' %}" />
 {% endblock meta %} {% block content %}
-<div class="h-[60vh] w-[60vw] flex flex-col p-5 border-2 border-black">
-  <div class="flex flex-row w-full justify-between gap-5">
-    <div
-      id="account-info"
-      class="flex flex-row justify-between p-5 border-2 border-black grow-[2]"
-    >
-      <p id="nomor-hp">{Placeholder: No. HP}</p>
-      <p id="saldo">{Placeholder: Saldo}</p>
-    </div>
-    <button
-      class="border-2 border-black grow hover:bg-neutral-100"
-      onclick="handleCreateTransaction()"
-    >
-      Lakukan transaksi
-    </button>
-  </div>
-  <p class="my-5">Riwayat Transaksi</p>
-  <main
-    id="scroll-container"
-    class="flex flex-col overflow-y-scroll gap-5 grow"
-  >
-    <template id="transaction-item">
-      <div class="flex flex-row justify-between p-5 border-2 border-black">
-        <p id="nominal"></p>
-        <p id="tanggal"></p>
-        <p id="kategori"></p>
+<div class="flex flex-col items-center justify-center">
+  <div class="h-[60vh] w-[60vw] flex flex-col p-5 border-2 border-black">
+    <div class="flex flex-row w-full justify-between gap-5 h-fit">
+      <div
+        id="account-info"
+        class="flex flex-row justify-between p-3 border-2 border-black h-fit grow-[2]"
+      >
+        <p id="nomor-hp">{Placeholder: No. HP}</p>
+        <p id="saldo">{Placeholder: Saldo}</p>
       </div>
-    </template>
-  </main>
+      <button
+        class="border-2 border-black h-fit grow hover:bg-neutral-100 p-3"
+        onclick="handleCreateTransaction()"
+      >
+        Lakukan transaksi
+      </button>
+    </div>
+    <p class="my-3 text-xl">Riwayat Transaksi</p>
+    <main id="scroll-container" class="flex flex-col overflow-y-scroll gap-2">
+      <template id="transaction-item">
+        <div class="flex flex-row justify-between p-4 border-2 border-black">
+          <p id="nominal"></p>
+          <p id="tanggal"></p>
+          <p id="kategori"></p>
+        </div>
+      </template>
+    </main>
+  </div>
 </div>
 
 {% include 'transaction-form.html' %}
