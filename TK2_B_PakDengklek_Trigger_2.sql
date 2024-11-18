@@ -1,3 +1,5 @@
+-- Trigger dan Stored Procedure Darren Hijau
+
 CREATE OR REPLACE FUNCTION handle_order_cancellation()
 RETURNS TRIGGER AS $$
 DECLARE

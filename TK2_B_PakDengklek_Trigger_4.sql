@@ -1,3 +1,5 @@
+-- Trigger dan Stored Procedure Thorbert Hijau
+
 CREATE OR REPLACE FUNCTION IncrementWorkerBalance(p_IdPemesanan UUID)
 RETURNS void
 LANGUAGE plpgsql
