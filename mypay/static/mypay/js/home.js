@@ -77,4 +77,6 @@ async function fetchTransactions() {
 
 window.onload = () => {
   renderTransactions();
+
+  let user = sessionStorage.getItem("user");
 };

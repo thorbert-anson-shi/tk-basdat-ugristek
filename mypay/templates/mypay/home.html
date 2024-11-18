@@ -22,16 +22,16 @@
     <main id="scroll-container" class="flex flex-col overflow-y-scroll gap-2">
       <template id="transaction-item">
         <div class="flex flex-row justify-between p-4 border-2 border-black">
-          <p id="nominal"></p>
-          <p id="tanggal"></p>
-          <p id="kategori"></p>
+          <p>Nominal: <span id="nominal"></span></p>
+          <p>Tanggal Transaksi: <span id="tanggal"></span></p>
+          <p>Kategori Transaksi: <span id="kategori"></span></p>
         </div>
       </template>
     </main>
   </div>
 </div>
 
-{% include 'transaction-form.html' %}
+{% include 'mypay/transaction-form.html' %}
 
 <script src="{% static 'mypay/js/home.js' %}"></script>
 {% endblock content %}
