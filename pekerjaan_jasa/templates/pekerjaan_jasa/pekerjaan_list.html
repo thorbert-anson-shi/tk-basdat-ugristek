@@ -5,20 +5,15 @@
     id="input-row"
     class="flex flex-row w-full justify-around space-x-5"
   >
+    <div class="p-2 bg-white border-2 border-black grow">
+      <p>List Pesanan</p>
+    </div>
     <select
-      name="kategori"
-      id="kategori-dropdown"
-      onchange="handleCategoryChange(event.target.value)"
-      class="cursor-pointer p-2 bg-white border-2 border-black grow"
+      name="status"
+      id="status-dropdown"
+      class="cursor-pointer p-2 bg-white border-2 border-black min-w-56"
     >
-      <option value="" selected hidden>Kategori</option>
-    </select>
-    <select
-      name="subkategori"
-      id="subkategori-dropdown"
-      class="cursor-pointer p-2 bg-white border-2 border-black grow"
-    >
-      <option value="" selected hidden>Subkategori</option>
+      <option value="" selected hidden>Status</option>
     </select>
     <button
       type="submit"
@@ -53,8 +48,9 @@
           </div>
         </div>
         <p id="biaya" class="grow-[1] text-center"></p>
-        <div class="grow-[1] flex flex-row justify-end">
-          <button class="border-2 border-black p-2">Kerjakan Pesanan</button>
+        <div class="grow-[1] flex flex-col justify-center items-end">
+          <p id="status-pemesanan"></p>
+          <button class="border-2 border-black p-2">Update Status</button>
         </div>
       </div>
     </template>
@@ -64,6 +60,4 @@
 <template id="option-template">
   <option value=""></option>
 </template>
-
-<script src="{% static 'pekerjaan_jasa/js/home.js' %}"></script>
 {% endblock content %}
