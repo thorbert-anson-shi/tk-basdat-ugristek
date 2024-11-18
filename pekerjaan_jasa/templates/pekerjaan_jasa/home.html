@@ -1,63 +1,65 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-<div class="w-[60vw] h-fit border-black border-2 flex flex-col p-5 space-y-5">
-  <form
-    onsubmit="{event.preventDefault(); handleSearch()}"
-    id="input-row"
-    class="flex flex-row w-full justify-around space-x-5"
-  >
-    <select
-      name="kategori"
-      id="kategori-dropdown"
-      onchange="handleCategoryChange(event.target.value)"
-      class="cursor-pointer p-2 bg-white border-2 border-black grow"
+<div class="flex flex-col justify-center items-center">
+  <div class="w-[60vw] h-fit border-black border-2 flex flex-col p-5 space-y-5">
+    <form
+      onsubmit="{event.preventDefault(); handleSearch()}"
+      id="input-row"
+      class="flex flex-row w-full justify-around space-x-5"
     >
-      <option value="" selected hidden>Kategori</option>
-    </select>
-    <select
-      name="subkategori"
-      id="subkategori-dropdown"
-      class="cursor-pointer p-2 bg-white border-2 border-black grow"
-    >
-      <option value="" selected hidden>Subkategori</option>
-    </select>
-    <button
-      type="submit"
-      class="border-2 border-black p-2 hover:bg-neutral-100"
-    >
-      Search
-    </button>
-  </form>
-  <div
-    id="results"
-    class="grow border-2 border-black h-[60vh] overflow-y-scroll space-y-5 p-5"
-  >
-    <template id="result-template">
-      <div
-        class="w-full flex flex-row items-center justify-between p-5 border-2 border-black"
+      <select
+        name="kategori"
+        id="kategori-dropdown"
+        onchange="handleCategoryChange(event.target.value)"
+        class="cursor-pointer p-2 bg-white border-2 border-black grow"
       >
-        <div class="grow-[2] flex flex-col">
-          <div id="row-1" class="flex flex-row space-x-5">
-            <p
-              id="subkategori-pesanan"
-              class="w-1/2 overflow-hidden text-ellipsis text-left border-r-2 border-black"
-            ></p>
-            <p id="nama-pelanggan" class="grow text-left"></p>
+        <option value="" selected hidden>Kategori</option>
+      </select>
+      <select
+        name="subkategori"
+        id="subkategori-dropdown"
+        class="cursor-pointer p-2 bg-white border-2 border-black grow"
+      >
+        <option value="" selected hidden>Subkategori</option>
+      </select>
+      <button
+        type="submit"
+        class="border-2 border-black p-2 hover:bg-neutral-100"
+      >
+        Search
+      </button>
+    </form>
+    <div
+      id="results"
+      class="grow border-2 border-black h-[60vh] overflow-y-scroll space-y-5 p-5"
+    >
+      <template id="result-template">
+        <div
+          class="w-full flex flex-row items-center justify-between p-5 border-2 border-black"
+        >
+          <div class="grow-[2] flex flex-col">
+            <div id="row-1" class="flex flex-row space-x-5">
+              <p
+                id="subkategori-pesanan"
+                class="w-1/2 overflow-hidden text-ellipsis text-left border-r-2 border-black"
+              ></p>
+              <p id="nama-pelanggan" class="grow text-left"></p>
+            </div>
+            <div id="row-2" class="flex flex-row space-x-5">
+              <p class="w-1/2 text-left">
+                Tanggal Pemesanan: <span id="tanggal-pemesanan"></span>
+              </p>
+              <p class="grow text-left">
+                Tanggal Pekerjaan: <span id="tanggal-pekerjaan"></span>
+              </p>
+            </div>
           </div>
-          <div id="row-2" class="flex flex-row space-x-5">
-            <p class="w-1/2 text-left">
-              Tanggal Pemesanan: <span id="tanggal-pemesanan"></span>
-            </p>
-            <p class="grow text-left">
-              Tanggal Pekerjaan: <span id="tanggal-pekerjaan"></span>
-            </p>
+          <p id="biaya" class="grow-[1] text-center"></p>
+          <div class="grow-[1] flex flex-row justify-end">
+            <button class="border-2 border-black p-2">Kerjakan Pesanan</button>
           </div>
         </div>
-        <p id="biaya" class="grow-[1] text-center"></p>
-        <div class="grow-[1] flex flex-row justify-end">
-          <button class="border-2 border-black p-2">Kerjakan Pesanan</button>
-        </div>
-      </div>
-    </template>
+      </template>
+    </div>
   </div>
 </div>
 
