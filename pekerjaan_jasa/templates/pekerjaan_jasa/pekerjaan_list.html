@@ -28,6 +28,7 @@
   >
     <template id="result-template">
       <div
+        id="result"
         class="w-full flex flex-row items-center justify-between p-5 border-2 border-black"
       >
         <div class="grow-[2] flex flex-col">
@@ -48,9 +49,15 @@
           </div>
         </div>
         <p id="biaya" class="grow-[1] text-center"></p>
-        <div class="grow-[1] flex flex-col justify-center items-end">
-          <p id="status-pemesanan"></p>
-          <button class="border-2 border-black p-2">Update Status</button>
+        <div class="grow-[1] flex flex-col justify-center items-end text-wrap">
+          <p id="status-pemesanan" class="text-center"></p>
+          <button
+            id="status-update-button"
+            class="border-2 border-black p-2 hover:bg-neutral-100"
+            onclick="handleStatusUpdate(event.target.getAttribute('data-ticketId'))"
+          >
+            Update Status
+          </button>
         </div>
       </div>
     </template>
@@ -60,4 +67,6 @@
 <template id="option-template">
   <option value=""></option>
 </template>
+
+<script src="{% static 'pekerjaan_jasa/js/pekerjaan_list.js' %}"></script>
 {% endblock content %}
