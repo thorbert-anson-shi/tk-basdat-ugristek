@@ -1,4 +1,4 @@
--- Trigger dan Stored Procedure Thorbert Hijau
+-- Trigger dan Stored Procedure Thorbert Merah
 
 CREATE OR REPLACE FUNCTION IncrementWorkerBalance(p_IdPemesanan UUID)
 RETURNS void
