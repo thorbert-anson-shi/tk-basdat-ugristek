@@ -11,6 +11,25 @@
     <div class="relative">
       <table class="w-full text-left">
         <tbody>
+
+          <!--The meta way to do it-->
+          {% for voucher in data_voucher%}
+            <tr>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.0 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.1 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.2 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.4 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.5 }}</td>
+              <td class="border-2 border-gray-400 p-2">
+                <div class="flex items-center justify-center">
+                  <span class="w-40">{{ voucher.6 }}</span>
+                  <button class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
+                </div>
+              </td>
+            </tr>
+          {% endfor %} 
+          
+          <!--This is just the hard code, erase afterwards.-->
           <tr data_kode_voucher="VOUC1000" data_hari_berlaku="30" data_kuota_penggunaan="100" data_harga="50000">
             <td class="border-2 border-gray-400 p-2 text-center">VOUC1000</td>
             <td class="border-2 border-gray-400 p-2 text-center">300000</td>
@@ -52,27 +71,6 @@
               </div>
             </td>
           </tr>
-          
-          {% comment %} 
-          Tambahkan ini saat TK3.
-
-          {% for voucher in data_voucher%}
-            <tr>
-              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.0 }}</td> -->
-              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.1 }}</td> -->
-              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.2 }}</td> -->
-              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.4 }}</td> -->
-              <!-- <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.5 }}</td> -->
-              <!-- <td class="border-2 border-gray-400 p-2">
-                <div class="flex items-center justify-center">
-                  <span class="w-40">{{ voucher.6 }}</span>
-                  <button class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
-                </div>
-              </td> -->
-            </tr>
-          {% endfor %} 
-          {% endcomment %}
-          
         </tbody>
       </table>
     </div>
@@ -83,7 +81,16 @@
     <div class="relative">
       <table class="w-full text-left">
         <tbody>
+
+          <!-- The meta way to do it -->
+          {% for promo in data_promo %}
+            <tr>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ promo.0 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ promo.1 }}</td>
+            </tr>
+          {% endfor %} 
           
+          <!--The hard code, erase this later.-->
           <tr>
             <td class="border-2 border-gray-400 p-2 text-center">PROM1002</td>
             <td class="border-2 border-gray-400 p-2 text-center">2024-12-11</td>
@@ -98,16 +105,6 @@
             <td class="border-2 border-gray-400 p-2 text-center">PROM1007</td>
             <td class="border-2 border-gray-400 p-2 text-center">2024-12-16</td>
           </tr>
-
-          {% comment %} 
-          Tambahkan ini saat TK3.
-
-          {% for promo in data_promo %}
-            <tr>
-              <td class="border-2 border-gray-400 p-2 text-center">{{ promo.0 }}</td>
-              <td class="border-2 border-gray-400 p-2 text-center">{{ promo.1 }}</td>
-            </tr>
-          {% endfor %} {% endcomment %}
         </tbody>
       </table>
     </div>
