@@ -87,7 +87,10 @@ WSGI_APPLICATION = "ug_sijarta.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"), engine="django.db.backends.postgresql"
+        default=(
+            os.getenv("DATABASE_URL_DEV") if DEBUG else os.getenv("DATABASE_URL_PROD")
+        ),
+        engine="django.db.backends.postgresql",
     ),
 }
 
