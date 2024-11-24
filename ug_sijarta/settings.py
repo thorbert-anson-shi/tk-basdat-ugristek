@@ -30,9 +30,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if os.getenv("PRODUCTION") == "True" else True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = (
+    ["127.0.0.1", "tk-basdat-ugristek-dev.up.railway.app"]
+    if DEBUG
+    else ["tk-basdat-ugristek-production.up.railway.app"]
+)
 
 # Application definition
 
