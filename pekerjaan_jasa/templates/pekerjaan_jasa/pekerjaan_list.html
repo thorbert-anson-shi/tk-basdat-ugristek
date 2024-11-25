@@ -6,20 +6,15 @@
       id="input-row"
       class="flex flex-row w-full justify-around space-x-5"
     >
+      <div class="p-2 bg-white border-2 border-black grow">
+        <p>List Pesanan</p>
+      </div>
       <select
-        name="kategori"
-        id="kategori-dropdown"
-        onchange="handleCategoryChange(event.target.value)"
-        class="cursor-pointer p-2 bg-white border-2 border-black grow"
+        name="status"
+        id="status-dropdown"
+        class="cursor-pointer p-2 bg-white border-2 border-black min-w-56"
       >
-        <option value="" selected hidden>Kategori</option>
-      </select>
-      <select
-        name="subkategori"
-        id="subkategori-dropdown"
-        class="cursor-pointer p-2 bg-white border-2 border-black grow"
-      >
-        <option value="" selected hidden>Subkategori</option>
+        <option value="" selected hidden>Status</option>
       </select>
       <button
         type="submit"
@@ -34,6 +29,7 @@
     >
       <template id="result-template">
         <div
+          id="result"
           class="w-full flex flex-row items-center justify-between p-5 border-2 border-black"
         >
           <div class="grow-[2] flex flex-col">
@@ -54,8 +50,17 @@
             </div>
           </div>
           <p id="biaya" class="grow-[1] text-center"></p>
-          <div class="grow-[1] flex flex-row justify-end">
-            <button class="border-2 border-black p-2">Kerjakan Pesanan</button>
+          <div
+            class="grow-[1] flex flex-col justify-center items-end text-wrap"
+          >
+            <p id="status-pemesanan" class="text-center"></p>
+            <button
+              id="status-update-button"
+              class="border-2 border-black p-2 hover:bg-neutral-100"
+              onclick="handleStatusUpdate(event.target.getAttribute('data-ticketId'))"
+            >
+              Update Status
+            </button>
           </div>
         </div>
       </template>
@@ -67,5 +72,5 @@
   <option value=""></option>
 </template>
 
-<script src="{% static 'pekerjaan_jasa/js/home.js' %}"></script>
+<script src="{% static 'pekerjaan_jasa/js/pekerjaan_list.js' %}"></script>
 {% endblock content %}

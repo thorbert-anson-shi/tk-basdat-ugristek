@@ -12,8 +12,7 @@ DUMMY_PENGGUNA = [
         "tanggal_lahir": "1995-06-15",
         "alamat": "Jl. Contoh No. 1",
         "role": "pengguna",
-        "saldo_mypay": 1000000
-
+        "saldo_mypay": 1000000,
     },
     {
         "nama": "Pengguna 2",
@@ -23,8 +22,8 @@ DUMMY_PENGGUNA = [
         "tanggal_lahir": "1990-03-22",
         "alamat": "Jl. Contoh No. 2",
         "role": "pengguna",
-        "saldo_mypay": 1000000
-    }
+        "saldo_mypay": 1000000,
+    },
 ]
 
 # Dummy data untuk Pekerja
@@ -39,10 +38,10 @@ DUMMY_PEKERJA = [
         "npwp": "123456789012345",
         "nama_bank": "GoPay",
         "no_rekening": "9876543210",
-        "url_foto": "https://example.com/images/worker1.jpg",  # URL foto pekerja
+        "url_foto": "https://csui2023.github.io/pfp/thorbert-anson-shi.jpg",  # URL foto pekerja
         "role": "pekerja",
         "rating": 4.5,
-        "saldo_mypay": 1000000
+        "saldo_mypay": 1000000,
     },
     {
         "nama": "Pekerja 2",
@@ -57,47 +56,52 @@ DUMMY_PEKERJA = [
         "url_foto": "https://example.com/images/worker2.jpg",  # URL foto pekerja
         "role": "pekerja",
         "rating": 4.5,
-        "saldo_mypay": 1000000
-        
-    }
+        "saldo_mypay": 1000000,
+    },
 ]
+
 
 # Halaman Awal
 def begin(request):
-    return render(request, "authenticate/index.html")  
+    return render(request, "authenticate/index.html")
+
 
 def login(request):
-    if request.method == 'POST':
-        phone = request.POST.get('no_hp')
-        password = request.POST.get('password')
+    if request.method == "POST":
+        phone = request.POST.get("no_hp")
+        password = request.POST.get("password")
 
         if not phone or not password:
             error_message = "No HP atau password tidak boleh kosong."
-            return render(request, 'authenticate/login.html', {'error_message': error_message})
+            return render(
+                request, "authenticate/login.html", {"error_message": error_message}
+            )
 
         # Cek data pengguna
         user = None
         for pengguna in DUMMY_PENGGUNA:
-            if pengguna['no_hp'] == phone and pengguna['password'] == password:
+            if pengguna["no_hp"] == phone and pengguna["password"] == password:
                 user = pengguna
                 break
 
         # Cek data pekerja jika tidak ditemukan di pengguna
         if not user:
             for pekerja in DUMMY_PEKERJA:
-                if pekerja['no_hp'] == phone and pekerja['password'] == password:
+                if pekerja["no_hp"] == phone and pekerja["password"] == password:
                     user = pekerja
                     break
 
         if user:
             # Simpan informasi user di session atau cookie
-            request.session['user'] = user  # Simpan data pengguna di session
-            return redirect('navbar')  # Redirect ke halaman utama setelah login
+            request.session["user"] = user  # Simpan data pengguna di session
+            return redirect("homepage")  # Redirect ke halaman utama setelah login
         else:
             error_message = "No HP atau password salah"
-            return render(request, 'authenticate/login.html', {'error_message': error_message})
+            return render(
+                request, "authenticate/login.html", {"error_message": error_message}
+            )
 
-    return render(request, 'authenticate/login.html')
+    return render(request, "authenticate/login.html")
 
 
 # Halaman Logout
@@ -105,6 +109,7 @@ def logout(request):
     if "user" in request.session:
         del request.session["user"]  # Hapus sesi pengguna
     return redirect("login")
+
 
 # Halaman Registrasi untuk Pengguna
 def register_pengguna(request):
@@ -119,7 +124,11 @@ def register_pengguna(request):
         # Validasi No HP unik
         if any(u["no_hp"] == no_hp for u in DUMMY_PENGGUNA + DUMMY_PEKERJA):
             error_message = "Nomor HP telah terdaftar."
-            return render(request, 'authenticate/register_pengguna.html', {'error_message': error_message})
+            return render(
+                request,
+                "authenticate/register_pengguna.html",
+                {"error_message": error_message},
+            )
 
         # Tambahkan ke DUMMY_PENGGUNA
         DUMMY_PENGGUNA.append(
@@ -137,6 +146,7 @@ def register_pengguna(request):
 
     return render(request, "authenticate/register_pengguna.html")
 
+
 # Halaman Registrasi untuk Pekerja
 def register_pekerja(request):
     if request.method == "POST":
@@ -153,10 +163,18 @@ def register_pekerja(request):
         # Validasi No HP dan NPWP unik
         if any(u["no_hp"] == no_hp for u in DUMMY_PENGGUNA + DUMMY_PEKERJA):
             error_message = "Nomor HP telah terdaftar."
-            return render(request, 'authenticate/register_pekerja.html', {'error_message': error_message})
+            return render(
+                request,
+                "authenticate/register_pekerja.html",
+                {"error_message": error_message},
+            )
         if any(u["npwp"] == npwp for u in DUMMY_PEKERJA):
             error_message = "Nomor NPWP telah terdaftar."
-            return render(request, 'authenticate/register_pekerja.html', {'error_message': error_message})
+            return render(
+                request,
+                "authenticate/register_pekerja.html",
+                {"error_message": error_message},
+            )
 
         # Tambahkan ke DUMMY_PEKERJA
         DUMMY_PEKERJA.append(
@@ -177,23 +195,86 @@ def register_pekerja(request):
 
     return render(request, "authenticate/register_pekerja.html")
 
+
 def register(request):
     return render(request, "authenticate/register.html")
 
-def navbar(request):
-    return render(request, "navbar.html")
+
+# def navbar(request):
+#     return render(request, "navbar.html")
+
 
 def profile(request):
     # Mendapatkan nomor HP dari session
-    user = request.session.get('user', None)
+    user = request.session.get("user", None)
 
     if not user:
         raise Http404("User not logged in")  # Pengguna harus login terlebih dahulu
 
-    role = user.get('role', 'pengguna')  # Mengambil role dari data pengguna yang ada di session
+    role = user.get(
+        "role", "pengguna"
+    )  # Mengambil role dari data pengguna yang ada di session
 
     context = {
-        'profile': user,
+        "profile": user,
     }
 
-    return render(request, 'profile.html', context)
+    return render(request, "profile.html", context)
+
+
+@csrf_exempt
+def updateProfile(request):
+    user = request.session.get("user", None)
+    if not user:
+        raise Http404("User not logged in")  # Pengguna harus login terlebih dahulu
+
+    if request.method == "POST":
+        if user["role"] == "pengguna":
+            user["nama"] = request.POST.get("nama")
+            user["jenis_kelamin"] = request.POST.get("jenis_kelamin")
+            user["no_hp"] = request.POST.get("no_hp")
+            user["tanggal_lahir"] = request.POST.get("tanggal_lahir")
+            user["alamat"] = request.POST.get("alamat")
+        else:
+            user["nama"] = request.POST.get("nama")
+            user["jenis_kelamin"] = request.POST.get("jenis_kelamin")
+            user["no_hp"] = request.POST.get("no_hp")
+            user["tanggal_lahir"] = request.POST.get("tanggal_lahir")
+            user["alamat"] = request.POST.get("alamat")
+            user["nama_bank"] = request.POST.get("nama_bank")
+            user["npwp"] = request.POST.get("npwp")
+            user["no_rekening"] = request.POST.get("no_rekening")
+            user["url_foto"] = request.POST.get("url_foto")
+        return redirect("profile")
+
+    context = {
+        "profile": user,
+    }
+
+    return render(request, "updateProfile.html", context)
+
+
+# Trigger dan Stored Procedure Danniel Kuning
+# CREATE OR REPLACE FUNCTION check_phone_number() RETURNS TRIGGER AS $$
+# BEGIN
+#     IF (EXISTS (SELECT * FROM users WHERE NoHP = NEW.NoHP)) THEN
+#         RAISE EXCEPTION 'Nomor telepon sudah terdaftar!';
+#     END IF;
+#     RETURN NEW;
+# END;
+# $$ LANGUAGE plpgsql;
+
+# CREATE TRIGGER check_phone_number BEFORE INSERT OR UPDATE ON users
+# FOR EACH ROW EXECUTE FUNCTION check_phone_number();
+
+# CREATE OR REPLACE FUNCTION check_bank_account() RETURNS TRIGGER AS $$
+# BEGIN
+#     IF (EXISTS (SELECT * FROM pekerja WHERE NomorRekening = NEW.NomorRekening AND NamaBank = NEW.NamaBank)) THEN
+#         RAISE EXCEPTION 'Nomor rekening dan Nama bank sudah terdaftar!';
+#     END IF;
+#     RETURN NEW;
+# END;
+# $$ LANGUAGE plpgsql;
+
+# CREATE TRIGGER check_bank_account BEFORE INSERT OR UPDATE ON pekerja
+# FOR EACH ROW EXECUTE FUNCTION check_bank_account();

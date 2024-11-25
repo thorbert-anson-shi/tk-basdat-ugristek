@@ -51,7 +51,7 @@
       <div class="mt-6 text-right">
         <button
           class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-          onclick=""
+          onclick="window.location.href=`{% url 'edit_profile' %}`"
         >
           Update
         </button>
@@ -61,6 +61,9 @@
       <h2 class="text-2xl font-bold mb-4 text-gray-700">Profile Pekerja</h2>
 
       <div class="space-y-4">
+        <div>
+          <img src="https://csui2023.github.io/pfp/thorbert-anson-shi.jpg" />
+        </div>
         <div>
           <p class="text-gray-600">
             <span class="font-semibold">Nama:</span> {{ profile.nama }}
@@ -123,7 +126,7 @@
       <div class="mt-6 text-right">
         <button
           class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-          onclick=""
+          onclick="window.location.href=`{% url 'edit_profile' %}`"
         >
           Update
         </button>

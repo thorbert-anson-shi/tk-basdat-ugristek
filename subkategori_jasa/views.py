@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .dummy_data import (
     DUMMY_PENGGUNA,
@@ -19,7 +19,7 @@ from .dummy_data import (
     DUMMY_TESTIMONI,
     DUMMY_STATUS_PESANAN,
     DUMMY_TR_PEMESANAN_STATUS,
-    DUMMY_MYPAY
+    DUMMY_MYPAY,
 )
 import uuid
 from datetime import datetime
@@ -33,12 +33,17 @@ from datetime import datetime
 
 def get_user_by_id(user_id):
     print("Mencari pengguna dengan ID:", user_id)  # Debugging
+    print("Mencari pengguna dengan ID:", user_id)  # Debugging
     for user in DUMMY_PENGGUNA:
+        if str(user["id"]) == str(user_id):  # Cocokkan sebagai string
+            print("Pengguna ditemukan:", user)
         if str(user["id"]) == str(user_id):  # Cocokkan sebagai string
             print("Pengguna ditemukan:", user)
             return user
     print("Pengguna tidak ditemukan.")
+    print("Pengguna tidak ditemukan.")
     return None
+
 
 
 def get_pelanggan_by_id(user_id):
@@ -46,6 +51,7 @@ def get_pelanggan_by_id(user_id):
         if pelanggan["id"] == user_id:
             return pelanggan
     return None
+
 
 def get_pekerja_by_id(pekerja_id):
     pekerja = next((pekerja for pekerja in DUMMY_PEKERJA if pekerja["id"] == pekerja_id), None)
@@ -60,17 +66,23 @@ def get_subkategori_jasa_by_id(subkategori_id):
             return subkategori
     return None
 
+
 def get_kategori_jasa_by_id(kategori_jasa_id):
     for kategori in DUMMY_KATEGORI_JASA:
         if kategori["id"] == kategori_jasa_id:
             return kategori
     return None
 
+
 def get_sesi_layanan_by_subkategori(subkategori_id):
-    return [sesi for sesi in DUMMY_SESI_LAYANAN if sesi["subkategori_id"] == subkategori_id]
+    return [
+        sesi for sesi in DUMMY_SESI_LAYANAN if sesi["subkategori_id"] == subkategori_id
+    ]
+
 
 def get_metode_bayar():
     return DUMMY_METODE_BAYAR
+
 
 def get_diskon_by_kode(kode_diskon):
     for diskon in DUMMY_DISKON:
@@ -78,17 +90,20 @@ def get_diskon_by_kode(kode_diskon):
             return diskon
     return None
 
+
 def get_voucher_by_kode(kode_voucher):
     for voucher in DUMMY_VOUCHER:
         if voucher["kode"] == kode_voucher:
             return voucher
     return None
 
+
 def get_tr_pemesanan_jasa_by_id(pemesanan_id):
     for pemesanan in DUMMY_TR_PEMESANAN_JASA:
         if pemesanan["id"] == pemesanan_id:
             return pemesanan
     return None
+
 
 def get_status_pesanan_by_keterangan(keterangan):
     for status in DUMMY_STATUS_PESANAN:
@@ -113,12 +128,23 @@ def get_tr_pemesanan_status_by_id_tr_pemesanan(pemesanan_id):
             return status
     return None
 
+
 def get_testimoni_by_id_tr_pemesanan(pemesanan_id):
-    return [testimoni for testimoni in DUMMY_TESTIMONI if testimoni["id_tr_pemesanan"] == pemesanan_id]
+    return [
+        testimoni
+        for testimoni in DUMMY_TESTIMONI
+        if testimoni["id_tr_pemesanan"] == pemesanan_id
+    ]
+
 
 def get_pekerja_list_by_kategori_jasa(kategori_jasa_id):
-    pekerja_ids = [pkj["pekerja_id"] for pkj in DUMMY_PEKERJA_KATEGORI_JASA if pkj["kategori_jasa_id"] == kategori_jasa_id]
+    pekerja_ids = [
+        pkj["pekerja_id"]
+        for pkj in DUMMY_PEKERJA_KATEGORI_JASA
+        if pkj["kategori_jasa_id"] == kategori_jasa_id
+    ]
     return [pekerja for pekerja in DUMMY_PEKERJA if pekerja["id"] in pekerja_ids]
+
 
 def get_pemesanan_jasa_by_pelanggan(pelanggan_id):
     return [p for p in DUMMY_TR_PEMESANAN_JASA if p["id_pelanggan"] == pelanggan_id]
@@ -130,11 +156,11 @@ def get_user_role(user_id):
         return 'unknown'
 
     if user["role"] == "pelanggan":
-        return 'pelanggan'
+        return "pelanggan"
     elif user["role"] == "pekerja":
-        return 'pekerja'
+        return "pekerja"
     else:
-        return 'unknown'
+        return "unknown"
 
 
 
@@ -216,7 +242,7 @@ def subkategori_jasa_pelanggan(request, subkategori_id):
         'subkategori_id': subkategori_id,
     }
 
-    return render(request, 'subkategori_jasa/pelanggan.html', context)
+    return render(request, "subkategori_jasa/pelanggan.html", context)
 
 
 
@@ -529,10 +555,15 @@ def buat_pemesanan_jasa(request):
         pekerja_id = pekerja_list[0]["id"]
 
         # Tambahkan pemesanan ke dummy data
+
+        # Tambahkan pemesanan ke dummy data
         pemesanan_id = str(uuid.uuid4())
         new_pemesanan = {
             "id": pemesanan_id,
             "tgl_pemesanan": datetime.strptime(tanggal_pemesanan, "%Y-%m-%d"),
+            "tgl_pekerjaan": datetime.strptime(tanggal_pemesanan, "%Y-%m-%d"),
+            "waktu_pekerjaan": datetime.now(),
+            "total_biaya": float(harga),
             "tgl_pekerjaan": datetime.strptime(tanggal_pemesanan, "%Y-%m-%d"),
             "waktu_pekerjaan": datetime.now(),
             "total_biaya": float(harga),
@@ -544,6 +575,8 @@ def buat_pemesanan_jasa(request):
             "id_metode_bayar": id_metode_bayar
         }
         DUMMY_TR_PEMESANAN_JASA.append(new_pemesanan)
+
+        # Update status pemesanan
 
         # Update status pemesanan
         status_mencari = get_status_pesanan_by_keterangan("Mencari Pekerja Terdekat")
@@ -583,7 +616,7 @@ def profil_pekerja(request, pekerja_id):
         'subkategori_id': subkategori_id,  # Pastikan subkategori_id diteruskan
     }
 
-    return render(request, 'subkategori_jasa/profil_pekerja.html', context)
+    return render(request, "subkategori_jasa/profil_pekerja.html", context)
 
 
 
@@ -673,40 +706,60 @@ def batalkan_pemesanan_jasa(request, pemesanan_id):
     user = get_user_by_id(request.user.id)
     if not user:
         return HttpResponseForbidden("Pengguna tidak ditemukan.")
-    
+
     user_role = get_user_role(request.user.id)
-    if user_role != 'pelanggan':
-        return HttpResponseForbidden("Anda tidak memiliki izin untuk melakukan aksi ini.")
-    
+    if user_role != "pelanggan":
+        return HttpResponseForbidden(
+            "Anda tidak memiliki izin untuk melakukan aksi ini."
+        )
+
     pemesanan = get_tr_pemesanan_jasa_by_id(pemesanan_id)
     if not pemesanan:
-        return render(request, 'subkategori_jasa/error.html', {'message': 'Pemesanan tidak ditemukan.'})
-    
+        return render(
+            request,
+            "subkategori_jasa/error.html",
+            {"message": "Pemesanan tidak ditemukan."},
+        )
+
     if pemesanan["id_pelanggan"] != user["id"]:
-        return HttpResponseForbidden("Anda tidak memiliki izin untuk membatalkan pemesanan ini.")
-    
+        return HttpResponseForbidden(
+            "Anda tidak memiliki izin untuk membatalkan pemesanan ini."
+        )
+
     # Mendapatkan status pemesanan
     tr_pemesanan_status = get_tr_pemesanan_status_by_id_tr_pemesanan(pemesanan_id)
     if not tr_pemesanan_status:
-        return render(request, 'subkategori_jasa/error.html', {'message': 'Status pemesanan tidak ditemukan.'})
-    
+        return render(
+            request,
+            "subkategori_jasa/error.html",
+            {"message": "Status pemesanan tidak ditemukan."},
+        )
+
     current_status = None
     for status in DUMMY_STATUS_PESANAN:
         if status["id"] == tr_pemesanan_status["id_status"]:
             current_status = status["keterangan"]
             break
-    
+
     if current_status not in ["Menunggu Pembayaran", "Mencari Pekerja Terdekat"]:
-        return render(request, 'subkategori_jasa/error.html', {'message': 'Tidak dapat membatalkan pemesanan ini.'})
-    
+        return render(
+            request,
+            "subkategori_jasa/error.html",
+            {"message": "Tidak dapat membatalkan pemesanan ini."},
+        )
+
     # Update status pemesanan menjadi "Dibatalkan"
     status_dibatalkan = get_status_pesanan_by_keterangan("Dibatalkan")
     if not status_dibatalkan:
-        return render(request, 'subkategori_jasa/error.html', {'message': 'Status "Dibatalkan" tidak ditemukan.'})
-    
+        return render(
+            request,
+            "subkategori_jasa/error.html",
+            {"message": 'Status "Dibatalkan" tidak ditemukan.'},
+        )
+
     tr_pemesanan_status["id_status"] = status_dibatalkan["id"]
     tr_pemesanan_status["tgl_waktu"] = datetime.now()
-    
+
     # Mengembalikan saldo MyPay pengguna
     for mypay in DUMMY_MYPAY:
         if mypay["id"] == user["id"]:
@@ -744,38 +797,38 @@ def show_form_testimoni(request):
     
 #     return render(request, 'subkategori_jasa/testimoni.html', context)
     
-'''
-Fungsi untuk mengembalikan saldo MyPay saat pemesanan dibatalkan
+# '''
+# Fungsi untuk mengembalikan saldo MyPay saat pemesanan dibatalkan
 
-CREATE OR REPLACE FUNCTION handle_order_cancellation() RETURNS TRIGGER 
-AS $$
-DECLARE
-    pelanggan_id UUID;
-    total_biaya NUMERIC;
-    id_status_dibatalkan INTEGER;
-    id_status_mencari_pekerja INTEGER;
-BEGIN
-    SELECT Id INTO id_status_dibatalkan FROM STATUS_PESANAN WHERE Keterangan = 'Dibatalkan';
-    SELECT Id INTO id_status_mencari_pekerja FROM STATUS_PESANAN WHERE Keterangan = 'Mencari Pekerja Terdekat';
+# CREATE OR REPLACE FUNCTION handle_order_cancellation() RETURNS TRIGGER 
+# AS $$
+# DECLARE
+#     pelanggan_id UUID;
+#     total_biaya NUMERIC;
+#     id_status_dibatalkan INTEGER;
+#     id_status_mencari_pekerja INTEGER;
+# BEGIN
+#     SELECT Id INTO id_status_dibatalkan FROM STATUS_PESANAN WHERE Keterangan = 'Dibatalkan';
+#     SELECT Id INTO id_status_mencari_pekerja FROM STATUS_PESANAN WHERE Keterangan = 'Mencari Pekerja Terdekat';
     
-    IF NEW.IdStatus = id_status_dibatalkan THEN
-        IF OLD.IdStatus = id_status_mencari_pekerja THEN
-            SELECT IdPelanggan, TotalBiaya INTO pelanggan_id, total_biaya
-            FROM TR_PEMESANAN_JASA
-            WHERE Id = NEW.IdTrPemesanan;
+#     IF NEW.IdStatus = id_status_dibatalkan THEN
+#         IF OLD.IdStatus = id_status_mencari_pekerja THEN
+#             SELECT IdPelanggan, TotalBiaya INTO pelanggan_id, total_biaya
+#             FROM TR_PEMESANAN_JASA
+#             WHERE Id = NEW.IdTrPemesanan;
             
-            UPDATE MYPAY
-            SET Saldo = Saldo + total_biaya
-            WHERE Id = pelanggan_id;
-        END IF;
-    END IF;
+#             UPDATE MYPAY
+#             SET Saldo = Saldo + total_biaya
+#             WHERE Id = pelanggan_id;
+#         END IF;
+#     END IF;
     
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+#     RETURN NEW;
+# END;
+# $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_handle_order_cancellation
-AFTER UPDATE ON TR_PEMESANAN_STATUS
-FOR EACH ROW
-EXECUTE FUNCTION handle_order_cancellation();
-'''
+# CREATE TRIGGER trg_handle_order_cancellation
+# AFTER UPDATE ON TR_PEMESANAN_STATUS
+# FOR EACH ROW
+# EXECUTE FUNCTION handle_order_cancellation();
+# """

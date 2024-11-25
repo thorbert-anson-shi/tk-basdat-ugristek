@@ -1,5 +1,12 @@
 *.pyc
 __pycache__/
+
+# databases
 db1
-env
 mydb
+
+# python env
+env
+
+# environment variables
+.env*

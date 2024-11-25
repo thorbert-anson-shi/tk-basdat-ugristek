@@ -1,3 +1,5 @@
+-- Trigger dan Stored Procedure Valentino Biru
+
 -- -----------------------------------------------------
 -- Fungsi: pembatasan_penggunaan
 -- Deskripsi:

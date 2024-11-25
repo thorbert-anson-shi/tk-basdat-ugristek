@@ -1,9 +1,8 @@
-{% extends "base.html" %} {% block content %}
 <nav class="navbar fixed top-0 left-0 w-full bg-gray-800 text-white shadow-lg">
   <div
-    class="navbar-container px-4 py-3 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2"
+    class="navbar-container w-full px-4 py-3 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2"
   >
-    {% if request.session.user %}
+    {% if request.session.user.role == 'pengguna' %}
     <a
       href="/"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
@@ -17,25 +16,65 @@
       MyPay
     </a>
     <a
-      href="/myorders/"
+      href="/subkategori_jasa/view_pemesanan_jasa/"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Kelola Pesanan Saya
     </a>
     <a
-      href="/discounts/"
+      href="/diskon/"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Diskon
     </a>
     <a
-      href="../profile/"
+      href="/profile/"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Profile
     </a>
     <a
-      href="../logout"
+      href="/logout"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Logout
+    </a>
+    <span class="user-name text-center col-span-full mt-2 md:mt-0">
+      Hello, {{ request.session.user.nama }}, {{ request.session.user.role }}
+    </span>
+    {% elif request.session.user.role == 'pekerja' %}
+    <a
+      href="/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Homepage
+    </a>
+    <a
+      href="/mypay/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      MyPay
+    </a>
+    <a
+      href="/pekerjaan_jasa/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Kelola Pekerjaan Saya
+    </a>
+    <a
+      href="/pekerjaan_jasa/list"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Kelola Status Pekerjaan
+    </a>
+    <a
+      href="/profile/"
+      class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+    >
+      Profile
+    </a>
+    <a
+      href="/logout"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Logout
@@ -60,10 +99,3 @@
     {% endif %}
   </div>
 </nav>
-
-<div class="content mt-16">
-  {% block additional_content %}
-  <!-- Additional content can be added here -->
-  {% endblock additional_content %}
-</div>
-{% endblock content %}
