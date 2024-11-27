@@ -3,4 +3,4 @@ from django.http import HttpRequest
 
 
 def home(request: HttpRequest):
-    return render(request, "home.html")
+    return render(request, "mypay/home.html")

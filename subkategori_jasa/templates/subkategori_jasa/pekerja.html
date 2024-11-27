@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subkategori Jasa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>{{ subkategori.nama_subkategori }}</h1>
+    <h4 class="text-muted">Kategori: {{ kategori.nama_kategori }}</h4>
+    <p>{{ subkategori.deskripsi }}</p>
+
+    <!-- Sesi Layanan -->
+    <h2>Pilihan Sesi Layanan</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Sesi Layanan</th>
+                <th>Harga</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sesi in sesi_layanan %}
+            <tr>
+                <td>{{ sesi.sesi }}</td>
+                <td>Rp {{ sesi.harga|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Daftar Pekerja -->
+    <h2>Pekerja</h2>
+    <div class="row">
+        {% for pekerja in pekerja_list %}
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <img src="{{ pekerja.link_foto }}" class="card-img-top" alt="{{ pekerja.nama }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ pekerja.nama }}</h5>
+                    <p>Rating: {{ pekerja.rating }}/5</p>
+                    <p>Jumlah Pesanan Selesai: {{ pekerja.jml_pesanan_selesai }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Testimoni -->
+    <h2>Testimoni</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nama Pengguna</th>
+                <th>Teks Testimoni</th>
+                <th>Tanggal</th>
+                <th>Nama Pekerja</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for testi in testimoni_list %}
+            <tr>
+                <td>{{ testi.nama_pengguna }}</td>
+                <td>{{ testi.teks }}</td>
+                <td>{{ testi.tgl|date:"d-m-Y" }}</td>
+                <td>{{ testi.nama_pekerja }}</td>
+                <td>{{ testi.rating }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if button_bergabung %}
+    <form method="post" action="{% url 'subkategori_jasa:bergabung_kategori_jasa' subkategori.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Bergabung</button>
+    </form>
+    {% else %}
+    <p class="text-success">Anda sudah tergabung di kategori ini.</p>
+    {% endif %}
+</div>
+</body>
+</html>
