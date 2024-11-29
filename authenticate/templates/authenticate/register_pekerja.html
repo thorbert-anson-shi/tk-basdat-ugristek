@@ -18,7 +18,7 @@
   <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6 overflow-y-auto max-h-[90vh] custom-scrollbar">
     <h2 class="text-2xl font-bold text-center border-b border-gray-200 pb-4 mb-6">Form Register</h2>
     
-    <form method="post" action="{% url 'register' %}" class="space-y-4">
+    <form method="post" action="{% url 'register_pekerja' %}" class="space-y-4">
       {% csrf_token %}
       
       <div class="grid grid-cols-3 items-center">
@@ -109,6 +109,7 @@
           <option value="BNI">BNI</option>
           <option value="BRI">BRI</option>
           <option value="Mandiri">Mandiri</option>
+          <option value="BebekBank">BebekBank</option>
         </select>
       </div>
       
