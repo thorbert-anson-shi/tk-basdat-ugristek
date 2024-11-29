@@ -1,103 +1,75 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.http import Http404
+
+# Decorator Import
 from django.views.decorators.csrf import csrf_exempt
 
-# Variabel global untuk menyimpan data dummy
-# Dummy data untuk Pengguna
-DUMMY_PENGGUNA = [
-    {
-        "nama": "Pengguna 1",
-        "password": "password123",
-        "jenis_kelamin": "L",
-        "no_hp": "08123456789",
-        "tanggal_lahir": "1995-06-15",
-        "alamat": "Jl. Contoh No. 1",
-        "role": "pengguna",
-        "saldo_mypay": 1000000,
-    },
-    {
-        "nama": "Pengguna 2",
-        "password": "password456",
-        "jenis_kelamin": "P",
-        "no_hp": "08198765432",
-        "tanggal_lahir": "1990-03-22",
-        "alamat": "Jl. Contoh No. 2",
-        "role": "pengguna",
-        "saldo_mypay": 1000000,
-    },
-]
-
-# Dummy data untuk Pekerja
-DUMMY_PEKERJA = [
-    {
-        "nama": "Pekerja 1",
-        "password": "password789",
-        "jenis_kelamin": "L",
-        "no_hp": "08987654321",
-        "tanggal_lahir": "1985-10-30",
-        "alamat": "Jl. Pekerja No. 1",
-        "npwp": "123456789012345",
-        "nama_bank": "GoPay",
-        "no_rekening": "9876543210",
-        "url_foto": "https://csui2023.github.io/pfp/thorbert-anson-shi.jpg",  # URL foto pekerja
-        "role": "pekerja",
-        "rating": 4.5,
-        "saldo_mypay": 1000000,
-    },
-    {
-        "nama": "Pekerja 2",
-        "password": "password101112",
-        "jenis_kelamin": "P",
-        "no_hp": "08965432109",
-        "tanggal_lahir": "1988-11-15",
-        "alamat": "Jl. Pekerja No. 2",
-        "npwp": "987654321098765",
-        "nama_bank": "OVO",
-        "no_rekening": "1234567890",
-        "url_foto": "https://example.com/images/worker2.jpg",  # URL foto pekerja
-        "role": "pekerja",
-        "rating": 4.5,
-        "saldo_mypay": 1000000,
-    },
-]
+# Database Import
+from django.db import connection
 
 
-# Halaman Awal
-def begin(request):
-    return render(request, "authenticate/index.html")
+# First Landing Page for Auth
+def first_auth_page(request):
+    # Login and Register Page
+    return render(request, "authenticate/login-register.html")
 
-
+# Login view
 def login(request):
     if request.method == "POST":
+        
+        # Get information from form
         phone = request.POST.get("no_hp")
         password = request.POST.get("password")
 
+        # Check if phone or password is empty
         if not phone or not password:
             error_message = "No HP atau password tidak boleh kosong."
             return render(
                 request, "authenticate/login.html", {"error_message": error_message}
             )
 
-        # Cek data pengguna
-        user = None
-        for pengguna in DUMMY_PENGGUNA:
-            if pengguna["no_hp"] == phone and pengguna["password"] == password:
-                user = pengguna
-                break
-
-        # Cek data pekerja jika tidak ditemukan di pengguna
-        if not user:
-            for pekerja in DUMMY_PEKERJA:
-                if pekerja["no_hp"] == phone and pekerja["password"] == password:
-                    user = pekerja
-                    break
-
+        # Doing validation to databases
+        with connection.cursor() as c:
+            c.execute("SELECT * FROM sijarta.users WHERE nohp = %s AND pwd = %s", [phone, password])
+            user = c.fetchone()
+            
         if user:
-            # Simpan informasi user di session atau cookie
-            request.session["user"] = user  # Simpan data pengguna di session
-            return redirect("homepage")  # Redirect ke halaman utama setelah login
+            nama = user[1]  
+            # If user found, figure out the role
+            user_id = str(user[0])
+            
+            with connection.cursor() as c:
+                c.execute("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_id])
+                pekerja = c.fetchone()
+                
+                c.execute("SELECT * FROM sijarta.pelanggan WHERE id = %s", [user_id])
+                pelanggan = c.fetchone()
+            
+            if pekerja:
+                user_session = {
+                    "id" : user_id,
+                    "no_hp" : phone,
+                    "nama" : nama,
+                    "saldo" : int(user[7]),
+                    "role" : "pekerja"
+                }       
+            elif pelanggan:
+                user_session = {
+                    "id" : user_id,
+                    "no_hp" : phone,
+                    "nama" : nama,
+                    "saldo" : int(user[7]),
+                    "role" : "pelanggan"
+                }      
+            
+            request.session["user"] = user_session
+            
+            return redirect("homepage")
+            
         else:
+            # If user not found
             error_message = "No HP atau password salah"
             return render(
                 request, "authenticate/login.html", {"error_message": error_message}
@@ -105,49 +77,52 @@ def login(request):
 
     return render(request, "authenticate/login.html")
 
-
 # Halaman Logout
 def logout(request):
     if "user" in request.session:
         del request.session["user"]  # Hapus sesi pengguna
     return redirect("login")
 
-
-# Halaman Registrasi untuk Pengguna
-def register_pengguna(request):
-    if request.method == "POST":
-        nama = request.POST.get("nama")
-        password = request.POST.get("password")
-        jenis_kelamin = request.POST.get("jenis_kelamin")
-        no_hp = request.POST.get("no_hp")
-        tanggal_lahir = request.POST.get("tanggal_lahir")
-        alamat = request.POST.get("alamat")
-
-        # Validasi No HP unik
-        if any(u["no_hp"] == no_hp for u in DUMMY_PENGGUNA + DUMMY_PEKERJA):
-            error_message = "Nomor HP telah terdaftar."
-            return render(
-                request,
-                "authenticate/register_pengguna.html",
-                {"error_message": error_message},
-            )
-
-        # Tambahkan ke DUMMY_PENGGUNA
-        DUMMY_PENGGUNA.append(
-            {
-                "nama": nama,
-                "password": password,
-                "jenis_kelamin": jenis_kelamin,
-                "no_hp": no_hp,
-                "tanggal_lahir": tanggal_lahir,
-                "alamat": alamat,
-            }
+def register_pelanggan(request):
+    
+    # If not POST, return the page
+    if request.method != "POST":
+        return render(request, "authenticate/register_pelanggan.html")
+    
+    # Get information from form
+    nama = request.POST.get("nama")
+    password = request.POST.get("password")
+    jenis_kelamin = request.POST.get("jenis_kelamin")
+    no_hp = request.POST.get("no_hp")
+    tanggal_lahir = request.POST.get("tanggal_lahir")
+    alamat = request.POST.get("alamat")
+    
+    # Not sure what this prevent, but just a safety measure
+    if not nama or not password or not jenis_kelamin or not no_hp or not tanggal_lahir or not alamat:
+        error_message = "Data tidak boleh kosong."
+        return render(
+            request, "authenticate/register_pelanggan.html", {"error_message": error_message}
         )
-        messages.success(request, "Registrasi berhasil. Silakan login.")
-        return redirect("login")
+        
+    print(nama, password, jenis_kelamin, no_hp, tanggal_lahir, alamat)
+    # Insert to database
+    try:
+        with connection.cursor() as c:
+            c.execute("INSERT INTO sijarta.users (nama, jeniskelamin, nohp, pwd, tgllahir, alamat, saldomypay) VALUES (%s, %s, %s, %s, %s, %s, %s)", [nama, jenis_kelamin, no_hp, password, tanggal_lahir, alamat, 0])
+            c.execute("SELECT id FROM sijarta.users WHERE nohp = %s", [no_hp])
+            user_id = str(c.fetchone()[0])
+            c.execute("INSERT INTO sijarta.pelanggan (id, level) VALUES (%s, %s)", [user_id, "Basic"])
+    except Exception as e:
+        print(e)
+        error_message = "Nomor HP telah terdaftar."
+        return render(
+            request, "authenticate/register_pelanggan.html", {"error_message": error_message}
+        )
+        
+    return render(request, "authenticate/login.html")
 
-    return render(request, "authenticate/register_pengguna.html")
-
+DUMMY_PENGGUNA = []
+DUMMY_PEKERJA = []
 
 # Halaman Registrasi untuk Pekerja
 def register_pekerja(request):
@@ -202,10 +177,6 @@ def register(request):
     return render(request, "authenticate/register.html")
 
 
-# def navbar(request):
-#     return render(request, "navbar.html")
-
-
 def profile(request):
     # Mendapatkan nomor HP dari session
     user = request.session.get("user", None)
@@ -213,9 +184,13 @@ def profile(request):
     if not user:
         raise Http404("User not logged in")  # Pengguna harus login terlebih dahulu
 
-    role = user.get(
-        "role", "pengguna"
-    )  # Mengambil role dari data pengguna yang ada di session
+    role = user.get("role")
+
+    if role == "pelanggan":
+        pass
+
+    if role == "pekerja":
+        pass
 
     context = {
         "profile": user,
@@ -256,27 +231,3 @@ def updateProfile(request):
     return render(request, "updateProfile.html", context)
 
 
-# Trigger dan Stored Procedure Danniel Kuning
-# CREATE OR REPLACE FUNCTION check_phone_number() RETURNS TRIGGER AS $$
-# BEGIN
-#     IF (EXISTS (SELECT * FROM users WHERE NoHP = NEW.NoHP)) THEN
-#         RAISE EXCEPTION 'Nomor telepon sudah terdaftar!';
-#     END IF;
-#     RETURN NEW;
-# END;
-# $$ LANGUAGE plpgsql;
-
-# CREATE TRIGGER check_phone_number BEFORE INSERT OR UPDATE ON users
-# FOR EACH ROW EXECUTE FUNCTION check_phone_number();
-
-# CREATE OR REPLACE FUNCTION check_bank_account() RETURNS TRIGGER AS $$
-# BEGIN
-#     IF (EXISTS (SELECT * FROM pekerja WHERE NomorRekening = NEW.NomorRekening AND NamaBank = NEW.NamaBank)) THEN
-#         RAISE EXCEPTION 'Nomor rekening dan Nama bank sudah terdaftar!';
-#     END IF;
-#     RETURN NEW;
-# END;
-# $$ LANGUAGE plpgsql;
-
-# CREATE TRIGGER check_bank_account BEFORE INSERT OR UPDATE ON pekerja
-# FOR EACH ROW EXECUTE FUNCTION check_bank_account();

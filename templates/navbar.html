@@ -2,7 +2,7 @@
   <div
     class="navbar-container w-full px-4 py-3 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2"
   >
-    {% if request.session.user.role == 'pengguna' %}
+    {% if request.session.user.role == 'pelanggan' %}
     <a
       href="/"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
@@ -84,13 +84,13 @@
     </span>
     {% else %}
     <a
-      href="../login"
+      href="auth/login"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Login
     </a>
     <a
-      href="../register"
+      href="auth/register"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Register
