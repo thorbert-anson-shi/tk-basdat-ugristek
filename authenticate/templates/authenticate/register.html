@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Authentication</title>
-    <style>
+{% extends "auth_base.html" %}
+{% block meta %}
+  <style>
       body {
         display: flex;
         justify-content: center;
@@ -38,15 +34,17 @@
         text-align: center;
       }
     </style>
-  </head>
-  <body>
+{% endblock %}
+
+{% block content %}
   
-    <div style="text-align: center;">
-      <h1>SIJARTA By UG_RISTEK</h1>
+  <div style="text-align: center;">
+      <h1> <b> SIJARTA By UG_RISTEK </b> </h1>
       <br>
       <div class="container">
-      <a href="pengguna" class="button">Register Pengguna</a>
+      <a href="pelanggan" class="button">Register Pengguna</a>
       <a href="pekerja" class="button">Register Pekerja</a>
-    </div>
-  </body>
-</html>
+  </div>
+
+{% endblock %}
+
