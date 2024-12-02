@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Authentication</title>
+{% extends "auth_base.html" %}
+{% block meta %}
     <style>
       body {
         display: flex;
@@ -38,15 +34,18 @@
         text-align: center;
       }
     </style>
-  </head>
-  <body>
+{% endblock %}
+
+{% block content %}
   
-    <div style="text-align: center;">
-      <h1>SIJARTA By UG_RISTEK</h1>
+  <div style="text-align: center;">
+      <h1><b> SIJARTA By UG_RISTEK </b></h1>
       <br>
       <div class="container">
       <a href="login" class="button">Login</a>
       <a href="register" class="button">Register</a>
-    </div>
-  </body>
-</html>
+  </div>
+
+{% endblock %}
+
+

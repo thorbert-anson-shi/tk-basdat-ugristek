@@ -2,12 +2,21 @@ from django.urls import path
 from authenticate.views import *
 
 urlpatterns = [
-    path("", begin, name="begin"),
+    # First Landing Page
+    path("", first_auth_page, name="first_auth_page"),
+    
+    # Login
     path("login/", login, name="login"),
+    
+    # Logout
     path("logout/", logout, name="logout"),
-    path("register/pengguna/", register_pengguna, name="register_pengguna"),
+    
+    # Register
+    path("register/pelanggan/", register_pelanggan, name="register_pelanggan"),
     path("register/pekerja/", register_pekerja, name="register_pekerja"),
     path("register/", register, name="register"),
+    
+    # Profile
     path("profile/", profile, name="profile"),
     path("profile/edit/", updateProfile, name="edit_profile"),
 ]
