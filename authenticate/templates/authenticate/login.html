@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
+{% extends "auth_base.html" %}
+
+{% block meta %}
+  <style>
       * {
         box-sizing: border-box;
         margin: 0;
@@ -117,38 +116,38 @@
         }
       }
     </style>
-  </head>
-  <body>
-    <div class="form-container">
-      <div class="form-title">Form Login</div>
-      <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div class="form-group">
-          <label for="phone">No Hp :</label>
-          <input
-            type="text"
-            id="phone"
-            name="no_hp"
-            placeholder="Enter your phone number"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="password">Password :</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-        <button type="submit" class="login-button">Login</button>
+{% endblock %}
 
-        {% if error_message %}
-        <div class="error-message show">{{ error_message }}</div>
-        {% endif %}
-      </form>
-    </div>
-  </body>
-</html>
+{% block content %}
+  <div class="form-container">
+    <div class="form-title">Form Login</div>
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="phone">No Hp :</label>
+        <input
+          type="text"
+          id="phone"
+          name="no_hp"
+          placeholder="Enter your phone number"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">Password :</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+      <button type="submit" class="login-button">Login</button>
+
+      {% if error_message %}
+      <div class="error-message show">{{ error_message }}</div>
+      {% endif %}
+    </form>
+  </div>
+{% endblock %}
