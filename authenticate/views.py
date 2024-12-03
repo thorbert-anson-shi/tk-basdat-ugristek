@@ -295,3 +295,27 @@ def updateProfile(request):
             )        
             
         return redirect("profile")
+
+
+def worker_profile(request, id):
+    c = connection.cursor()
+    c.execute("SELECT * FROM sijarta.users WHERE id = %s", [id])
+    user = c.fetchone()
+    
+    if user is None:
+        raise Http404("Worker not found")
+    
+    c.execute("SELECT * FROM sijarta.pekerja WHERE id = %s", [id])
+    user_pekerja = c.fetchone()
+    context = {
+        "nama" : user[1],
+        "no_hp" : user[3],
+        "tanggal_lahir" : user[5],
+        "alamat" : user[6],    
+        "url_foto": user_pekerja[4],
+        "rating": user_pekerja[5],
+        "jml_pesanan_selesai": user_pekerja[6]   
+    }
+    
+    return render(request, "workerProfile.html", context)
+    
