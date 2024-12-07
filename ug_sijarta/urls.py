@@ -23,7 +23,6 @@ urlpatterns = [
     path("", include("main.urls")),
     path("diskon/", include("diskon.urls")),
     path("subkategori_jasa/<str:subkategori_id>/", include("subkategori_jasa.urls")),
-    # path("subkategori_jasa/", include("subkategori_jasa.urls")),
     path("mypay/", include("mypay.urls")),
     path("auth/", include("authenticate.urls")),
     path("pekerjaan_jasa/", include("pekerjaan_jasa.urls")),
