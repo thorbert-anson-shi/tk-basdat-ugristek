@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% block meta %} 
+  <title>Diskon | Sijarta</title>
+{% endblock meta %}
+{% block content %}
+<div class="container mx-auto p-4">
+  <h1 class="text-3xl font-bold text-center mb-4">Diskon</h1>
+  
+  <p>Voucher</p>
+  <div class="border-2 border-gray-400 p-6 rounded-lg space-y-4">
+    <div class="relative">
+      <table class="w-full text-left">
+        <tbody>
+
+          <tr>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Kode</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Potongan</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Min Transaksi</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Hari Berlaku</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Kuota Penggunaan</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Harga</td>
+          </tr>
+
+          {% for voucher in data_voucher%}
+            <tr data_kode_voucher={{voucher.0}} data_hari_berlaku={{voucher.4}} data_kuota_penggunaan={{voucher.5}} data_harga={{voucher.6}}>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.0 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.1 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.2 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.4 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.5 }}</td>
+              <td class="border-2 border-gray-400 p-2">
+                <div class="flex items-center justify-center">
+                  <span class="w-40">{{ voucher.6 }}</span>
+                  <button class="tombolBeli bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p>Promo</p>
+  <div class="border-2 border-gray-400 p-6 rounded-lg space-y-4">
+    <div class="relative">
+      <table class="w-full text-left">
+        <tbody>
+          <tr>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Kode</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Tanggal Akhir Berlaku</td>
+          </tr>
+          <!-- The meta way to do it -->
+          {% for promo in data_promo %}
+            <tr>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ promo.0 }}</td>
+              <td class="border-2 border-gray-400 p-2 text-center">{{ promo.1 }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pop up -->
+<div id="modalMetodePembayaran" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col justify-between">
+        <!-- Header -->
+        <h2 class="text-lg font-semibold text-center mb-4">Beli Voucher</h2>
+        
+        <!-- Payment Method Selection -->
+        <div class="flex items-center justify-between mb-4">
+            <!-- Metode Pembayaran Label -->
+            <span class="font-medium">Metode Pembayaran</span>
+            <!-- Dropdown -->
+            <select id="dropdownMetodePembayaran" class="border-2 border-gray-300 rounded p-2">
+                <!-- Default 'Metode' option -->
+                <option value="" selected disabled>Metode</option>
+                <!-- Other options -->
+                <option value="MyPay">MyPay</option>
+                <option value="OVO">OVO</option>
+                <option value="DANA">DANA</option>
+                <option value="LinkAja">LinkAja</option>
+                <option value="GoPay">GoPay</option>
+                <option value="ShopeePay">ShopeePay</option>
+                <option value="Transfer Bank">Transfer Bank</option>
+            </select>
+        </div>
+
+        <!-- Close Button at the bottom -->
+        <button id="tombolBeliModal" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0 mt-4">
+            Beli
+        </button>
+    </div>
+</div>
+
+<div id="modalSukses" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col justify-between">
+        <!-- Header -->
+        <h2 class="text-lg font-semibold text-center mb-4">SUKSES</h2>
+        
+        <!-- Modal Content -->
+        <p id="modalContent" class="text-center flex-grow">Selamat! Anda berhasil membeli voucher kode <strong>XXX</strong>. Voucher ini berlaku hingga tanggal <strong>XX/XX/XXXX</strong> dengan kuota penggunaan sebanyak <strong>X</strong> kali.</p>
+        
+        <!-- Close Button at the bottom -->
+        <button id="tombolTutupSukses" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0 mt-4">
+            Tutup
+        </button>
+    </div>
+</div>
+
+<div id="modalGagal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col justify-between">
+        <!-- Header -->
+        <h2 class="text-lg font-semibold text-center mb-4">GAGAL</h2>
+        
+        <!-- Modal Content -->
+        <p class="text-center flex-grow">Maaf, saldo Anda tidak cukup untuk membeli voucher ini.</p>
+        
+        <!-- Tombol tutup di bawah -->
+        <button id="tombolTutupGagal" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0 mt-4">
+            Tutup
+        </button>
+    </div>
+</div>
+
+<script>
+
+  //Ambil elemen modal metode pembayaran.
+  const modalMetodePembayaran = document.getElementById("modalMetodePembayaran");
+
+  //Ambil elemen tombol pada modal.
+  const tombolBeliModal = document.getElementById("tombolBeliModal");
+
+  // Ambil elemen modal sukses
+  const modalSukses = document.getElementById("modalSukses");
+
+  // Ambil elemen modal gagal
+  const modalGagal = document.getElementById("modalGagal");
+
+  // Ambil tombol-tombol beli dengan class "tombolBeli"
+  const tombolBeliButtons = document.querySelectorAll(".tombolBeli");
+
+  // Ambil tombol yang memiliki id tombolTutupSukses dan tombolTutupGagal
+
+  const tombolTutupSukses = document.getElementById("tombolTutupSukses");
+  const tombolTutupGagal = document.getElementById("tombolTutupGagal");
+
+  // Ambil elemen untuk menampilkan konten di dalam modal
+  const modalContent = document.getElementById("modalContent");
+
+  const saldoPengguna = {{saldo_pengguna}};
+
+  // Saat pengguna tekan salah satu tombol "Beli Voucher", munculkan modal ke layar.
+  tombolBeliButtons.forEach(button => {
+    button.onclick = function() {
+      // Menangkap baris (tr) dari tombol yang diklik
+      const row = button.closest("tr");
+      
+      // Mengambil data dari baris di mana tombol beli ditekan.
+      const kodeVoucher = row.getAttribute("data_kode_voucher");
+      const hargaBeliVoucher = parseInt(row.getAttribute("data_harga"), 10); // Harga voucher di kolom kedua
+      const hariBerlaku = parseInt(row.getAttribute("data_hari_berlaku"), 10);
+      const kuotaPenggunaan = parseInt(row.getAttribute("data_kuota_penggunaan"), 10);
+      modalMetodePembayaran.classList.remove("hidden");
+      
+      tombolBeliModal.onclick = function(){
+
+        //Ambil nilai dari pilihan dropdown metode pembayaran dan periksa apakah pengguna telah memilih suatu
+        //metode pembayaran.
+        const selectedMetode = dropdownMetodePembayaran.value;
+
+        if (!selectedMetode) {
+          alert("Mohon pilih metode pembayaran!");
+          return;
+        }
+
+        // Cek jika saldo cukup
+        if (saldoPengguna >= hargaBeliVoucher) {
+          // Hitung tanggal kedaluwarsa
+          const tanggalKedaluwarsa = new Date();
+          tanggalKedaluwarsa.setDate(tanggalKedaluwarsa.getDate() + hariBerlaku); // Menambahkan validity ke tanggal saat ini
+          
+          // Format tanggal kedaluwarsa
+          const tanggalKedaluwarsaFid = tanggalKedaluwarsa.toLocaleDateString("id-ID"); // Format ID date (dd/mm/yyyy)
+
+          // Update konten modal dengan data yang diambil
+          modalContent.innerHTML = `Selamat! Anda berhasil membeli voucher kode <strong>${kodeVoucher}</strong>. Voucher ini berlaku hingga tanggal <strong>${tanggalKedaluwarsaFid}</strong> dengan kuota penggunaan sebanyak <strong>${kuotaPenggunaan}</strong> kali.`;
+          
+          // Tampilkan modal sukses
+          modalSukses.classList.remove("hidden");
+
+          // Kirim data voucher dan metode pembayaran ke server menggunakan fetch API
+          const dataToSend = {
+            kode_voucher: kodeVoucher,
+            harga_beli_voucher: hargaBeliVoucher,
+            hari_berlaku: hariBerlaku,
+            metode_pembayaran: selectedMetode
+          };
+
+          try {
+            // Kirim data ke server menggunakan fetch
+            const response = await fetch('/insert_pembelian_voucher/', {
+              method: 'POST',  // Menggunakan POST untuk mengirim data
+              headers: {
+                'Content-Type': 'application/json',  // Mengirim data dalam format JSON
+                'X-CSRFToken': '{{ csrf_token }}'  // Menyertakan token CSRF untuk keamanan
+              },
+              body: JSON.stringify(dataToSend)  // Mengirim data sebagai JSON
+            });
+
+            // Menunggu respon dari server dan mengonversinya menjadi JSON
+            const responseData = await response.json();
+
+            // Tampilkan pesan sesuai status response.
+            if (responseData.status === 'success') {
+              alert('Voucher berhasil dibeli.');
+            } else {
+              alert('Pembelian voucher gagal');
+              console.error('Pembelian voucher gagal:', responseData.message);
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan, silakan coba lagi.');
+          }
+        } 
+        
+        else {
+          // Jika saldo tidak cukup, tampilkan modal gagal
+          modalGagal.classList.remove("hidden");
+        }
+      }
+    };
+  });
+  
+
+  // Saat pengguna tekan tombol "Tutup" pada modal sukses atau gagal, sembunyikan modal dari layar.
+  tombolTutupSukses.onclick = function() {
+    modalSukses.classList.add("hidden");
+    modalMetodePembayaran.classList.add("hidden");
+    dropdownMetodePembayaran.value = "";  // Reset dropdown to the default ("Metode")
+  };
+
+  tombolTutupGagal.onclick = function() {
+    modalGagal.classList.add("hidden");
+    modalMetodePembayaran.classList.add("hidden");
+    dropdownMetodePembayaran.value = "";  // Reset dropdown to the default ("Metode")
+  };
+
+  // Saat pengguna klik bagian di luar modal, sembunyikan modal dari layar.
+  window.onclick = function(event) {
+    if (event.target === modalSukses) {
+      modalSukses.classList.add("hidden");
+      modalMetodePembayaran.classList.add("hidden");
+      dropdownMetodePembayaran.value = "";  // Reset dropdown to the default ("Metode")
+    }
+    if (event.target === modalGagal) {
+      modalGagal.classList.add("hidden");
+      modalMetodePembayaran.classList.add("hidden");
+      dropdownMetodePembayaran.value = "";  // Reset dropdown to the default ("Metode")
+    }
+    if(event.target === modalMetodePembayaran){
+      modalMetodePembayaran.classList.add("hidden");
+      dropdownMetodePembayaran.value = "";  // Reset dropdown to the default ("Metode")
+    }
+  };
+</script>
+
+{% endblock content %}
