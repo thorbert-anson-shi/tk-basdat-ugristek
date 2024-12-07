@@ -11,24 +11,33 @@
 CREATE OR REPLACE FUNCTION pembatasan_penggunaan()
 RETURNS TRIGGER AS $$
 DECLARE
-    jumlah_hari_berlaku INT;
-    kuota_penggunaan INT;
+    tanggal_akhir DATE;
+    telah_digunakan INT;
+    batas_penggunaan INT;
+    id_pembelian INT;
 BEGIN
-    SELECT v.JmlHariBerlaku, v.KuotaPenggunaan
-    INTO jumlah_hari_berlaku, kuota_penggunaan
-    FROM voucher v
-    WHERE v.Kode = NEW.Kode;
 
-    IF jumlah_hari_berlaku > 0 AND kuota_penggunaan > 0 THEN
-        UPDATE voucher
-        SET kuota_penggunaan = kuota_penggunaan - 1
-        WHERE Kode = NEW.Kode;
+    -- Ambil tanggal akhir, telah digunakan, kuota penggunaan, dan id_pembelian dari 
+    -- tr_pembelian_voucher dengan Id tertentu.
+    SELECT tpv.TglAkhir, tpv.TelahDigunakan, v.KuotaPenggunaan, tpv.Id
+    INTO tanggal_akhir, telah_digunakan, batas_penggunaan, id_pembelian
+    FROM tr_pembelian_voucher tpv
+    JOIN voucher v ON v.kode = tpv.IdVoucher
+    WHERE tpv.Id = NEW.Id;
 
-    ELSIF jumlah_hari_berlaku <= 0 THEN
+    -- Kalau voucher sudah kedaluwarsa, hapuslah voucher tersebut dari relasi tr_pembelian_voucher.
+    IF CURRENT_DATE > tanggal_akhir THEN
         RAISE EXCEPTION 'Voucher "%" sudah kedaluwarsa.', NEW.Kode;
+        DELETE FROM tr_pembelian_voucher
+        WHERE Id = id_pembelian;
 
-    ELSE
+    -- Kalau penggunaan voucher sudah sama dengan atau melewati batas penggunaan, 
+    -- hapuslah voucher tersebut dari relasi tr_pembelian_voucher.
+    ELSIF telah_digunakan >= batas_penggunaan THEN
         RAISE EXCEPTION 'Kuota penggunaan voucher "%" sudah habis.', NEW.Kode;
+        DELETE FROM tr_pembelian_voucher
+        WHERE Id = id_pembelian;
+
     END IF;
 
     RETURN NEW;
@@ -36,6 +45,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_pembatasan_penggunaan
-BEFORE UPDATE ON voucher
+BEFORE UPDATE ON tr_pembelian_voucher
 FOR EACH ROW
 EXECUTE FUNCTION pembatasan_penggunaan();

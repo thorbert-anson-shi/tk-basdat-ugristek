@@ -12,7 +12,15 @@
       <table class="w-full text-left">
         <tbody>
 
-          <!--The meta way to do it-->
+          <tr>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Kode</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Potongan</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Min Transaksi</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Hari Berlaku</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Kuota Penggunaan</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Harga</td>
+          </tr>
+
           {% for voucher in data_voucher%}
             <tr data_kode_voucher={{voucher.0}} data_hari_berlaku={{voucher.4}} data_kuota_penggunaan={{voucher.5}} data_harga={{voucher.6}}>
               <td class="border-2 border-gray-400 p-2 text-center">{{ voucher.0 }}</td>
@@ -27,22 +35,7 @@
                 </div>
               </td>
             </tr>
-          {% endfor %} 
-          
-          <!--This is just the hard code, erase afterwards.-->
-          <tr data_kode_voucher="VOUC1000" data_hari_berlaku="30" data_kuota_penggunaan="100" data_harga="50000">
-            <td class="border-2 border-gray-400 p-2 text-center">VOUC1000</td>
-            <td class="border-2 border-gray-400 p-2 text-center">300000</td>
-            <td class="border-2 border-gray-400 p-2 text-center">3000000</td>
-            <td class="border-2 border-gray-400 p-2 text-center">30</td>
-            <td class="border-2 border-gray-400 p-2 text-center">100</td>
-            <td class="border-2 border-gray-400 p-2">
-              <div class="flex items-center justify-center">
-                <span class="w-40">50000</span>
-                <button class="tombolBeli bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
-              </div>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -53,20 +46,17 @@
     <div class="relative">
       <table class="w-full text-left">
         <tbody>
-
+          <tr>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Kode</td>
+              <td class="border-2 border-gray-400 p-2 text-center text-2xl font-bold">Tanggal Akhir Berlaku</td>
+          </tr>
           <!-- The meta way to do it -->
           {% for promo in data_promo %}
             <tr>
               <td class="border-2 border-gray-400 p-2 text-center">{{ promo.0 }}</td>
               <td class="border-2 border-gray-400 p-2 text-center">{{ promo.1 }}</td>
             </tr>
-          {% endfor %} 
-          
-          <!--The hard code, erase this later.-->
-          <tr>
-            <td class="border-2 border-gray-400 p-2 text-center">PROM1002</td>
-            <td class="border-2 border-gray-400 p-2 text-center">2024-12-11</td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -88,13 +78,13 @@
                 <!-- Default 'Metode' option -->
                 <option value="" selected disabled>Metode</option>
                 <!-- Other options -->
-                <option value="mypay">MyPay</option>
-                <option value="ovo">OVO</option>
-                <option value="dana">DANA</option>
-                <option value="linkaja">LinkAja</option>
-                <option value="gopay">GoPay</option>
-                <option value="shopeepay">ShopeePay</option>
-                <option value="transfer_bank">Transfer Bank</option>
+                <option value="MyPay">MyPay</option>
+                <option value="OVO">OVO</option>
+                <option value="DANA">DANA</option>
+                <option value="LinkAja">LinkAja</option>
+                <option value="GoPay">GoPay</option>
+                <option value="ShopeePay">ShopeePay</option>
+                <option value="Transfer Bank">Transfer Bank</option>
             </select>
         </div>
 
@@ -160,8 +150,7 @@
   // Ambil elemen untuk menampilkan konten di dalam modal
   const modalContent = document.getElementById("modalContent");
 
-  // TODO: Simulasikan saldo pengguna (misalnya 50000) (Nanti ganti dengan saldoPengguna aslinya.)
-  const saldoPengguna = 30000;
+  const saldoPengguna = {{saldo_pengguna}};
 
   // Saat pengguna tekan salah satu tombol "Beli Voucher", munculkan modal ke layar.
   tombolBeliButtons.forEach(button => {
@@ -201,12 +190,47 @@
           
           // Tampilkan modal sukses
           modalSukses.classList.remove("hidden");
-        } else {
+
+          // Kirim data voucher dan metode pembayaran ke server menggunakan fetch API
+          const dataToSend = {
+            kode_voucher: kodeVoucher,
+            harga_beli_voucher: hargaBeliVoucher,
+            hari_berlaku: hariBerlaku,
+            metode_pembayaran: selectedMetode
+          };
+
+          try {
+            // Kirim data ke server menggunakan fetch
+            const response = await fetch('/insert_pembelian_voucher/', {
+              method: 'POST',  // Menggunakan POST untuk mengirim data
+              headers: {
+                'Content-Type': 'application/json',  // Mengirim data dalam format JSON
+                'X-CSRFToken': '{{ csrf_token }}'  // Menyertakan token CSRF untuk keamanan
+              },
+              body: JSON.stringify(dataToSend)  // Mengirim data sebagai JSON
+            });
+
+            // Menunggu respon dari server dan mengonversinya menjadi JSON
+            const responseData = await response.json();
+
+            // Tampilkan pesan sesuai status response.
+            if (responseData.status === 'success') {
+              alert('Voucher berhasil dibeli.');
+            } else {
+              alert('Pembelian voucher gagal');
+              console.error('Pembelian voucher gagal:', responseData.message);
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan, silakan coba lagi.');
+          }
+        } 
+        
+        else {
           // Jika saldo tidak cukup, tampilkan modal gagal
           modalGagal.classList.remove("hidden");
         }
       }
-      
     };
   });
   
@@ -242,40 +266,5 @@
     }
   };
 </script>
-
-<!-- The content to go later.
-<div class="flex items-center justify-center">
-  <span class="w-40">{{ voucher.6 }}</span>
-  <button id="updateButton" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 border-l-0">Beli</button>
-</div>
-
-<script>
-  document.getElementById('updateButton').addEventListener('click', function() {
-    // Assume voucherId is dynamically passed to the frontend
-    const voucherId = '{{ voucher.id }}';  // Replace with actual voucher ID dynamically
-    
-    fetch('/update-voucher/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': '{{ csrf_token }}',  // CSRF protection
-      },
-      body: JSON.stringify({ voucherId: voucherId }), // Send voucher ID to the server
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        alert('Voucher updated successfully!');
-      } else {
-        alert('Failed to update voucher: ' + data.message);
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('An error occurred while updating the voucher.');
-    });
-  });
-</script>
--->
 
 {% endblock content %}
