@@ -152,6 +152,32 @@
 
   const saldoPengguna = {{saldo_pengguna}};
 
+  async function insertPembelianVoucher(dataToSend){
+    const response = await fetch('insert-pembelian-voucher/', {
+        method: 'POST',  // Menggunakan POST untuk mengirim data
+        headers: {
+          'Content-Type': 'application/json',  // Mengirim data dalam format JSON
+          'X-CSRFToken': '{{ csrf_token }}'  // Menyertakan token CSRF untuk keamanan
+        },
+        body: JSON.stringify(dataToSend)  // Mengirim data sebagai JSON
+    });
+
+    const responseData = await response.json();
+    try {
+      // Tampilkan pesan sesuai status response.
+      if (responseData.status === 'success') {
+        alert('Voucher berhasil dibeli.');
+      } else {
+        alert('Pembelian voucher gagal');
+        console.error('Pembelian voucher gagal:', responseData.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Terjadi kesalahan, silakan coba lagi.');
+    }
+    return;
+  }
+
   // Saat pengguna tekan salah satu tombol "Beli Voucher", munculkan modal ke layar.
   tombolBeliButtons.forEach(button => {
     button.onclick = function() {
@@ -166,7 +192,7 @@
       modalMetodePembayaran.classList.remove("hidden");
       
       tombolBeliModal.onclick = function(){
-
+        
         //Ambil nilai dari pilihan dropdown metode pembayaran dan periksa apakah pengguna telah memilih suatu
         //metode pembayaran.
         const selectedMetode = dropdownMetodePembayaran.value;
@@ -199,31 +225,7 @@
             metode_pembayaran: selectedMetode
           };
 
-          try {
-            // Kirim data ke server menggunakan fetch
-            const response = await fetch('/insert_pembelian_voucher/', {
-              method: 'POST',  // Menggunakan POST untuk mengirim data
-              headers: {
-                'Content-Type': 'application/json',  // Mengirim data dalam format JSON
-                'X-CSRFToken': '{{ csrf_token }}'  // Menyertakan token CSRF untuk keamanan
-              },
-              body: JSON.stringify(dataToSend)  // Mengirim data sebagai JSON
-            });
-
-            // Menunggu respon dari server dan mengonversinya menjadi JSON
-            const responseData = await response.json();
-
-            // Tampilkan pesan sesuai status response.
-            if (responseData.status === 'success') {
-              alert('Voucher berhasil dibeli.');
-            } else {
-              alert('Pembelian voucher gagal');
-              console.error('Pembelian voucher gagal:', responseData.message);
-            }
-          } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan, silakan coba lagi.');
-          }
+          insertPembelianVoucher(JSON.stringify(dataToSend));
         } 
         
         else {

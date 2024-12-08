@@ -28,18 +28,18 @@ def insert_pembelian_voucher(request):
     if request.method == 'POST':
         try:
             # Parse the JSON data sent in the request body
-            data = json.loads(request.body.decode('utf-8'))
+            data = json.loads(json.loads(request.body.decode('utf-8')))
 
             # Akses nilai dari dictionary json supaya bisa dipakai.
-            kode_voucher = data.get('kode_voucher')
-            harga_beli_voucher = data.get('harga_beli_voucher')
-            hari_berlaku = data.get('hari_berlaku')
-            metode_pembayaran = data.get('metode_pembayaran')
+            kode_voucher = data["kode_voucher"]
+            harga_beli_voucher = data["harga_beli_voucher"]
+            hari_berlaku = data["hari_berlaku"]
+            metode_pembayaran = data["metode_pembayaran"]
             
             # Raw SQL query to insert the voucher status
             sql_query_insert = '''
                 INSERT INTO tr_pembelian_voucher (TglAwal, TglAkhir, TelahDigunakan, IdPelanggan, IdVoucher, idMetodeBayar) VALUES
-                ('%s', '%s', 0, '%s', '%s', '%s');
+                (%s, %s, 0, %s, %s, %s);
             '''
             tgl_awal = dt.date(dt.now())
             tgl_akhir = dt.date(dt.now()) + td(days = hari_berlaku)
@@ -57,8 +57,7 @@ def insert_pembelian_voucher(request):
                 if hasil_cari_id:
                     id_metode_bayar = hasil_cari_id[0]
                     cursor.execute(sql_query_insert, [tgl_awal, tgl_akhir, id_pelanggan, id_voucher, id_metode_bayar])
-                    sisa_saldo = get_user_balance(request) - harga_beli_voucher
-                    update_user_balance(request, sisa_saldo, id_pelanggan)
+                    update_user_balance(request, -harga_beli_voucher, id_pelanggan)
 
                 # Kembalikan pesan error ketika tidak menemukan id yang dicari.
                 else: 
@@ -87,22 +86,25 @@ def get_user_id(request):
     return user_id
 
 # Fungsi untuk update saldo user di sesi dan backend sql.
-def update_user_balance(request, new_balance, id_pelanggan):
+def update_user_balance(request, delta, id_pelanggan):
     # Periksa apakah user ada dalam sesi ini.
     if "user" in request.session:
-        # Update saldo user
-        request.session["user"]["saldo"] = new_balance
-        
-        # Kasih tahu Django ada session yang berubah.
-        request.session.modified = True
         
         # Eksekusi query untuk update saldo my pay user
+        query_ambil_saldo_mypay = '''
+            SELECT saldoMyPay FROM users WHERE Id = %s;
+        '''
         query_update_saldo_mypay = '''
-            UPDATE user SET SaldoMyPay = %s WHERE Id = %s
+            UPDATE users SET SaldoMyPay = %s WHERE Id = %s;
         '''
         with connection.cursor() as cursor:
             cursor.execute("SET search_path TO public,sijarta;")
+            cursor.execute(query_ambil_saldo_mypay, [id_pelanggan])
+            new_balance = cursor.fetchone()[0] + delta
             cursor.execute(query_update_saldo_mypay, [new_balance, id_pelanggan])
+            cursor.execute(query_ambil_saldo_mypay, [id_pelanggan])
+            new_balance_yare = cursor.fetchone()[0]
+            request.session["user"]["saldo"] = new_balance_yare
 
         # Kembalikan pesan sesuai hasilnya, antara sukses atau error.
         return JsonResponse({'status': 'success', 'message': 'User balance updated successfully'})
