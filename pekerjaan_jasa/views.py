@@ -30,11 +30,11 @@ def get_categories(request: HttpRequest):
 
     # Fetching categories from user
     with connection.cursor() as cursor:
+        cursor.execute("set search_path to sijarta;")
         cursor.execute(
-            "set search_path to sijarta;"
-            "select k.namakategori from kategori_jasa k "
+            "select k.namakategori, k.id from kategori_jasa k "
             "join pekerja_kategori_jasa p on k.id = p.kategorijasaid "
-            "where p.pekerjaid = %s",
+            "where p.pekerjaid = %s;",
             [user_id],
         )
         categories = cursor.fetchall()
@@ -46,13 +46,13 @@ def get_categories(request: HttpRequest):
 
 def get_subcategories(request: HttpRequest):
     # TODO: Fetch category ID instead in order to keep things consistent
-    category = request.GET.get("kategori")
-    category_id = category["id"]
+    category_id = request.GET.get("kategori")
 
     # Fetch subcategories from chosen category
     with connection.cursor() as cursor:
+        cursor.execute("set search_path to sijarta;")
         cursor.execute(
-            "select sj.namasubkategori from subkategori_jasa sj "
+            "select sj.namasubkategori, sj.id from subkategori_jasa sj "
             "join kategori_jasa k on k.id = sj.kategorijasaid "
             "where sj.kategorijasaid = %s",
             [category_id],
@@ -64,13 +64,14 @@ def get_subcategories(request: HttpRequest):
 
 
 def get_tickets(request: HttpRequest):
-    subcategory = request.GET.get("subkategori", default=None)
+    subcategory_id = request.GET.get("subkategori", default=None)
     status = request.GET.get("status", default=None)
 
     with connection.cursor() as cursor:
+        cursor.execute("set search_path to sijarta;")
         cursor.execute(
-            "select sj.namasubkategori as subkategori, p.nama, tpj.tglpemesanan, "
-            "tpj.tglpekerjaan, tpj.totalbiaya, st.statuspesanan as status "
+            "select sj.id as subkategoriid, sj.namasubkategori as subkategori, p.nama as nama_pelanggan, tpj.tglpemesanan as tanggal_pemesanan, "
+            "tpj.tglpekerjaan as tanggal_pekerjaan, tpj.totalbiaya as biaya, st.statuspesanan as status "
             "from tr_pemesanan_jasa tpj "
             "join subkategori_jasa sj on sj.id = tpj.idkategorijasa "
             "join users p on tpj.idpelanggan = p.id "
@@ -80,17 +81,21 @@ def get_tickets(request: HttpRequest):
         filtered_tickets = dictfetchall(cursor)
 
     # Fetch tickets from chosen subcategory
-    if subcategory != "" and subcategory is not None:
+    if subcategory_id != "" and subcategory_id is not None:
         filtered_tickets = list(
             filter(
-                lambda ticket: ticket["subkategori"] == subcategory, filtered_tickets
+                lambda ticket: str(ticket["subkategoriid"]) == subcategory_id
+                and ticket["status"] == "Mencari Pekerja Terdekat",
+                filtered_tickets,
             )
         )
+        print(filtered_tickets)
 
     if status != "" and status is not None:
         filtered_tickets = list(
             filter(
-                lambda ticket: Status(ticket["status"]).name == status, filtered_tickets
+                lambda ticket: Status(ticket["status"]).name == status,
+                filtered_tickets,
             )
         )
 

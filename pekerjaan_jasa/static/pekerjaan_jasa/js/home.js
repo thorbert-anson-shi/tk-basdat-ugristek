@@ -12,8 +12,8 @@ async function fetchCategories() {
     let clone = optionTemplateRef.content.cloneNode(true);
     let optionEle = clone.querySelector("option");
 
-    optionEle.value = category.toLowerCase().replace(" ", "_");
-    optionEle.innerHTML = category;
+    optionEle.value = category[1];
+    optionEle.innerHTML = category[0];
 
     kategoriDropdown.appendChild(clone);
   });
@@ -32,8 +32,8 @@ async function handleCategoryChange(category) {
     let clone = optionTemplateRef.content.cloneNode(true);
     let optionEle = clone.querySelector("option");
 
-    optionEle.value = subcategory.toLowerCase().replace(" ", "_");
-    optionEle.innerHTML = subcategory;
+    optionEle.value = subcategory[1];
+    optionEle.innerHTML = subcategory[0];
 
     subkategoriDropdown.appendChild(clone);
   });
@@ -58,10 +58,7 @@ async function handleSearch() {
     let tanggalPekerjaanEle = clone.querySelector("#tanggal-pekerjaan");
     let biayaEle = clone.querySelector("#biaya");
 
-    subkategoriPesananEle.innerHTML = ticket.subkategori
-      .split("_")
-      .map((w) => w[0].toUpperCase() + w.substring(1).toLowerCase())
-      .join(" ");
+    subkategoriPesananEle.innerHTML = ticket.subkategori;
     namaPelangganEle.innerHTML = ticket.nama_pelanggan;
     tanggalPemesananEle.innerHTML = ticket.tanggal_pemesanan;
     tanggalPekerjaanEle.innerHTML = ticket.tanggal_pekerjaan;
