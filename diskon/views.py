@@ -22,7 +22,6 @@ def show_hal_diskon(request):
 
     return render(request, "diskon/hal_diskon.html", context)
 
-# TODO: Push after this functionality works!
 # Fungsi untuk insert TR_PEMBELIAN_VOUCHER baru dan update saldo pengguna.
 def insert_pembelian_voucher(request):
     if request.method == 'POST':
@@ -112,14 +111,18 @@ def update_user_balance(request, delta, id_pelanggan):
         return JsonResponse({'status': 'error', 'message': 'User session not found'}, status=400)
 
 
-# Fungsi untuk menyediakan sebuah endpoint buat asynchronous AJAX fetching.
-# def fetch_voucher(request):
-#     with connection.cursor() as cursor:
-#         cursor.execute("SET search_path TO public,sijarta;")
-#         cursor.execute(
-#           "SELECT * FROM diskon d JOIN voucher v ON d.Kode = v.Kode;")
-#         vouchers = cursor.fetchall()
-#     vouchers_json = {"voucher_data":vouchers}
-#     return JsonResponse(vouchers_json)
+def update_voucher_usage(request, kode_diskon):
+    user_id = get_user_id(request)
+    kode_diskon_yare = kode_diskon
+    query_cari_voucher_update = '''
+        SELECT Id FROM tr_pembelian_voucher WHERE IdPelanggan = %s AND IdVoucher = %s LIMIT 1;
+    '''
+    query_update_voucher_usage = '''
+        UPDATE tr_pembelian_voucher SET TelahDigunakan = TelahDigunakan + 1 WHERE Id = %s;
+    '''
 
-# TODO: Figure out how to increment during usage, make a method here.
+    with connection.cursor() as cursor:
+        cursor.execute("SET search_path TO public,sijarta;")
+        cursor.execute(query_cari_voucher_update, [user_id, kode_diskon_yare])
+        id_transaksi = cursor.fetchone()[0]
+        cursor.execute(query_update_voucher_usage, [id_transaksi])
