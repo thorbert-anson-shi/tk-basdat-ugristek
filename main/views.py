@@ -69,7 +69,9 @@ def display_homepage(request):
 
     # print("\n\n")
 
-    print(context['subkategori_jasa'])
+    # print(context['subkategori_jasa'])
+
+    print(type(subkategori_jasa[0]['id']))
 
     # print(context['subkategori'][0])
 

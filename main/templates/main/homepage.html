@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base.html' %}
+{% block meta %}
     <title>Homepage</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    {% include 'navbar.html' %}
+{% endblock meta %}
 
+{% block content %}
     <div class="container mt-5">
         <h1 class="text-center">SIJARTA</h1>
         
@@ -43,23 +38,20 @@
                         {{ kategori.namakategori }}
                     </button>
                 </h2>
-                <div id="collapse{{ kategori.id }}" class="accordion-collapse collapse show" aria-labelledby="heading{{ kategori.id }}" data-bs-parent="#accordionExample">
+                <div id="collapse{{ kategori.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" aria-labelledby="heading{{ kategori.id }}" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
                         <ul class="list-group">
                             {% for subkategori in subkategori_jasa %}
                                 {% if subkategori.kategorijasaid == kategori.id %}
                                     <li class="list-group-item">
-                                        {% if user.role == "pelanggan" %}
-                                            {% comment %} <a href="{% url 'subkategori_jasa:subkategori_jasa_pelanggan' subkategori.id %}"> {% endcomment %}
+                                        {% if user.role %}
+                                            <a href="{% url 'subkategori_jasa:subkategori_jasa' subkategori.id %}">
                                                 {{ subkategori.namasubkategori }}
-                                            {% comment %} </a> {% endcomment %}
+                                            </a>
+                                        {% else %}
+                                            {{ subkategori.namasubkategori }}
                                         {% endif %}
-                                        
-                                        {% if user.role == "pekerja" %}
-                                            {% comment %} <a href="{% url 'subkategori_jasa:subkategori_jasa_pekerja' subkategori.id %}"> {% endcomment %}
-                                                {{ subkategori.namasubkategori }}
-                                            {% comment %} </a> {% endcomment %}
-                                        {% endif %}
+                                    
                                     
                                     </li>
                                 {% endif %}
@@ -73,5 +65,4 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock content %}
