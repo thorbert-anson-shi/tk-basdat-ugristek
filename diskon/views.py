@@ -14,7 +14,7 @@ def show_hal_diskon(request):
         promo = cursor.fetchall()
 
     context = {
-        'data_voucher': vouchers,
+        'data_voucher': voucher,
         'data_promo': promo,
         'saldo_pengguna': get_user_balance(request)
     }
