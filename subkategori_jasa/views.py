@@ -78,9 +78,9 @@ def subkategori_jasa(request, subkategori_id):
     }
 
     # print(kategori)
-    print("====================")
+    # print("====================")
     # print(sesi_layanan)
-    print(testimoni_list)
+    # print(testimoni_list)
 
     return render(request, "subkategori_jasa/display_subkategori.html", context)
 
@@ -90,8 +90,8 @@ def pesan_jasa(request):
         cursor.execute(set_syntax())
 
     if request.method == "POST":
+
         subkategori_id = request.POST.get('subkategori_id')
-        sesi_harga = int(request.POST.get('sesi_harga'))
         metode_bayar = request.POST.get('metode_bayar')
         kode_diskon = request.POST.get('kode_diskon', None)
         tanggal_pemesanan = request.POST.get('tanggal_pemesanan')
@@ -100,13 +100,13 @@ def pesan_jasa(request):
         transaksi_baru_id = uuid.uuid4()
         curr_tgl = datetime.now()
         
+        sesi_harga = int(request.POST.get('sesi_harga'))
 
         try:
             curr_potongan = 0
             if kode_diskon:
                 with connection.cursor() as cursor:
                     diskon = run(select_diskon_val_syntax(kode_diskon))
-                    print(diskon)
 
                 if diskon:
                     potongan = diskon["potongan"]
@@ -121,6 +121,8 @@ def pesan_jasa(request):
                         },
                         status=400
                         )
+                    
+                    print("4")
                 else:
                     return JsonResponse({
                         "success": False,
@@ -130,6 +132,7 @@ def pesan_jasa(request):
                     )
             
             final_harga = max(0, sesi_harga-curr_potongan)
+            print(final_harga)
 
             # nanti ganti id-nya
             if metode_bayar == 'daedfde6-91df-4090-b40a-e0dd26650696':
@@ -171,6 +174,7 @@ def pesan_jasa(request):
                                )
             
             return redirect('subkategori_jasa:form_pemesanan_jasa')
+        
         except Exception as e:
             print(f"Error: {e}")
             return JsonResponse(
@@ -250,30 +254,38 @@ def form_pemesanan_jasa(request):
                     SKJ.namasubkategori AS subkategori,
                     TPJ.sesi AS sesi_sesi,
                     TPJ.totalbiaya AS sesi_harga,
-                    COALESCE(U.nama, "Belum Ada Pekerja") AS nama_pekerja,
-                    TPSSP.status AS statuspesanan,
+                    COALESCE(U.nama, 'Belum Ada Pekerja') AS nama_pekerja,
+                    TPSSP.statuspesanan AS statuspesanan,
                     TPJ.id AS pesanan_id,
-                    (CASE WHEN EXISTS (
-                        SELECT 1
-                        FROM testimoni T
-                        WHERE T.idtrpemesanan = TPJ.id
-                    ) THEN TRUE ELSE FALSE END
-                    ) AS testimonidibuat
+                    CASE 
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM testimoni T
+                            WHERE T.idtrpemesanan = TPJ.id
+                        ) THEN TRUE 
+                        ELSE FALSE 
+                    END AS testimonidibuat
                 FROM tr_pemesanan_jasa TPJ
-                LEFT JOIN subkategori_jasa SKJ ON SKJ.id = TPJ.idkategorijasa
-                LEFT JOIN pekerja P ON P.id = TPJ.idpekerja
-                LEFT JOIN users U ON U.id = P.id
+                LEFT JOIN subkategori_jasa SKJ 
+                    ON SKJ.id = TPJ.idkategorijasa
+                LEFT JOIN pekerja P 
+                    ON P.id = TPJ.idpekerja
+                LEFT JOIN users U 
+                    ON U.id = P.id
                 LEFT JOIN (
-                    SELECT DISTINCT
-                        ON (TPS.idtrpemesanan)
+                    SELECT 
+                        DISTINCT ON (TPS.idtrpemesanan) 
                         TPS.idtrpemesanan,
-                        SP.status
+                        SP.statuspesanan
                     FROM tr_pemesanan_status TPS
-                    JOIN status_pesanan SP ON SP.id = TPS.idstatus
+                    JOIN status_pesanan SP 
+                        ON SP.id = TPS.idstatus
                     ORDER BY TPS.idtrpemesanan, TPS.tglwaktu DESC
-                ) TPSSP ON TPJ.id = TPSSP.idtrpemesanan
+                ) TPSSP 
+                    ON TPJ.id = TPSSP.idtrpemesanan
                 WHERE TPJ.idpelanggan = %s
             """
+
 
             filter_subkategori_query = """
                 SELECT DISTINCT namasubkategori
@@ -281,7 +293,7 @@ def form_pemesanan_jasa(request):
             """
 
             filter_status_query = """
-                SELECT DISTINCT status
+                SELECT DISTINCT statuspesanan
                 FROM status_pesanan;
             """
 
@@ -324,6 +336,16 @@ def form_pemesanan_jasa(request):
         "selected_subkategori": selected_subkategori,
         "selected_status": selected_status,
     }
+
+    print(daftar_pesanan)
+    print("===================")
+    print(filter_subkategori)
+    print("===================")
+    print(filter_status)
+    print("===================")
+    print(selected_subkategori)
+    print("===================")
+    print(selected_status)
 
     return render(request, "subkategori_jasa/form_pemesanan_jasa.html", context)
     

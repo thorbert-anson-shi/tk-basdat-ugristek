@@ -22,7 +22,7 @@ BEGIN
             WHERE Id = NEW.IdTrPemesanan;
             
             -- Mengembalikan saldo ke MyPay pelanggan
-            UPDATE user
+            UPDATE users
             SET saldomypay = COALESCE(Saldo, 0) + total_biaya
             WHERE id = pelanggan_id;
             
@@ -40,4 +40,3 @@ CREATE TRIGGER trg_handle_order_cancellation
 AFTER UPDATE ON TR_PEMESANAN_STATUS
 FOR EACH ROW
 EXECUTE FUNCTION handle_order_cancellation();
-

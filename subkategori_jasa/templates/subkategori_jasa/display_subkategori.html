@@ -25,6 +25,7 @@
                     </thead>
                     <tbody>
                         {% for sesi in sesi_layanan %}
+                            {{sesi.sesi}} - {{sesi.harga}}
                         <tr>
                             <td style="text-align: center;">{{ sesi.sesi }}</td>
                             <td style="text-align: center;">Rp {{ sesi.harga|floatformat:2 }}</td>
@@ -121,7 +122,7 @@
                 <button type="button" class="close" onclick="closeModal()">
                     &times;
                 </button>
-                    <form method="post" id="pesan_jasa_form" action="{% url 'subkategori_jasa:pesan_jasa' %}">
+                <form method="post" id="pesan_jasa_form" action="{% url 'subkategori_jasa:pesan_jasa' %}">
 
                     {% csrf_token %}
                     <input type="hidden" id="subkategori_id" name="subkategori_id" value='{{ subkategori_id }}'>
@@ -179,12 +180,12 @@
             const modal = document.getElementById('pesanModal');
             modal.style.display = 'block';
 
-            {% comment %} const modalElement = document.getElementById('pesanModal');
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show(); {% endcomment %}
-
             document.getElementById('sesi_nama').value = sesi_nama;
+            console.log('Set sesi_nama to:', document.getElementById('sesi_nama').value);
+
             document.getElementById('sesi_harga').value = sesi_harga;
+            console.log('Set sesi_harga to:', document.getElementById('sesi_harga').value);
+
             document.getElementById('total_biaya').value = `Rp ${sesi_harga}`;
 
             const sesi_sesi = document.querySelector(`[data-sesi="${sesi_nama}"]`).getAttribute('data-sesi');
@@ -196,8 +197,8 @@
         }
 
         document.getElementById('button_bergabung').addEventListener('click', function(){
-            console.log("{% url 'subkategori_jasa:bergabung' kategori_id=kategori.id %}");
-            fetch("{% url 'subkategori_jasa:bergabung' kategori_id=kategori.id %}", {
+            console.log("{% url 'subkategori_jasa:bergabung' kategori.id %}");
+            fetch("{% url 'subkategori_jasa:bergabung' kategori.id %}", {
                 method:'POST',
                 headers:{
                     'X-CSRFToken': '{{ csrf_token }}',
