@@ -50,9 +50,9 @@
                     <td>{{ pesanan.status }}</td>
                     <td>
                         {% if pesanan.status == "Menunggu Pembayaran" or pesanan.status == "Mencari Pekerja Terdekat" %}
-                            <button class="btn btn-danger" onclick="cancel_pesanan('{{ pesanan.id }}')">Cancel</button>
+                            <button class="btn btn-danger" onclick="cancel_pesanan('{{ pesanan.pesanan_id }}')">Cancel</button>
                         {% elif pesanan.status == "Selesai" and not pesanan.testimoni_dibuat %}
-                            <button class="btn btn-primary" onclick="buat_testimoni('{{ pesanan.id }}')">Buat Testimoni</button>
+                            <button class="btn btn-primary" onclick="buat_testimoni('{{ pesanan.pesanan_id }}')">Buat Testimoni</button>
                         {% endif %} 
                     </td>
                 </tr>
