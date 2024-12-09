@@ -35,12 +35,10 @@ $$;
 
 CREATE OR REPLACE FUNCTION GetSelesaiStatusId()
 RETURNS UUID
-LANGUAGE plpgsql
+LANGUAGE sql
 AS $$
-BEGIN
     SELECT id FROM status_pesanan WHERE statuspesanan = 'Selesai';
-END;
-$$;
+$$
 
 CREATE OR REPLACE TRIGGER check_order_completion
 AFTER INSERT ON tr_pemesanan_status
