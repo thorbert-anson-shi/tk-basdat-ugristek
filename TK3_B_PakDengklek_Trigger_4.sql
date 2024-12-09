@@ -1,7 +1,7 @@
 -- Trigger dan Stored Procedure Thorbert Merah
 
-CREATE OR REPLACE FUNCTION IncrementWorkerBalance(p_IdPemesanan UUID)
-RETURNS void
+CREATE OR REPLACE FUNCTION IncrementWorkerBalance()
+RETURNS trigger
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -13,7 +13,7 @@ BEGIN
     SELECT IdPekerja, TotalBiaya
     INTO v_IdPekerja, v_TotalBiaya
     FROM tr_pemesanan_jasa
-    WHERE Id = p_IdPemesanan;
+    WHERE Id = TG_ARGV[0];
 
     -- Increment the worker's balance
     UPDATE users
@@ -33,11 +33,15 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION GetSelesaiStatusId()
+RETURNS UUID
+LANGUAGE sql
+AS $$
+    SELECT id FROM status_pesanan WHERE statuspesanan = 'Selesai';
+$$
+
 CREATE OR REPLACE TRIGGER check_order_completion
-AFTER UPDATE OF idstatus ON tr_pemesanan_status
+AFTER INSERT ON tr_pemesanan_status
 FOR EACH ROW
-WHEN (
-    OLD.idstatus IS DISTINCT FROM NEW.idstatus 
-    AND NEW.idstatus = (SELECT id FROM status_pesanan WHERE statuspesanan = 'Selesai')
-)
-EXECUTE FUNCTION IncrementWorkerBalance(NEW.IdTrPemesanan);
+WHEN (NEW.idstatus = GetSelesaiStatusId())
+EXECUTE FUNCTION IncrementWorkerBalance(IdTrPemesanan);

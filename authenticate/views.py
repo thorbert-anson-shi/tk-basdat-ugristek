@@ -1,103 +1,75 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.http import Http404
+
+# Decorator Import
 from django.views.decorators.csrf import csrf_exempt
 
-# Variabel global untuk menyimpan data dummy
-# Dummy data untuk Pengguna
-DUMMY_PENGGUNA = [
-    {
-        "nama": "Pengguna 1",
-        "password": "password123",
-        "jenis_kelamin": "L",
-        "no_hp": "08123456789",
-        "tanggal_lahir": "1995-06-15",
-        "alamat": "Jl. Contoh No. 1",
-        "role": "pengguna",
-        "saldo_mypay": 1000000,
-    },
-    {
-        "nama": "Pengguna 2",
-        "password": "password456",
-        "jenis_kelamin": "P",
-        "no_hp": "08198765432",
-        "tanggal_lahir": "1990-03-22",
-        "alamat": "Jl. Contoh No. 2",
-        "role": "pengguna",
-        "saldo_mypay": 1000000,
-    },
-]
-
-# Dummy data untuk Pekerja
-DUMMY_PEKERJA = [
-    {
-        "nama": "Pekerja 1",
-        "password": "password789",
-        "jenis_kelamin": "L",
-        "no_hp": "08987654321",
-        "tanggal_lahir": "1985-10-30",
-        "alamat": "Jl. Pekerja No. 1",
-        "npwp": "123456789012345",
-        "nama_bank": "GoPay",
-        "no_rekening": "9876543210",
-        "url_foto": "https://csui2023.github.io/pfp/thorbert-anson-shi.jpg",  # URL foto pekerja
-        "role": "pekerja",
-        "rating": 4.5,
-        "saldo_mypay": 1000000,
-    },
-    {
-        "nama": "Pekerja 2",
-        "password": "password101112",
-        "jenis_kelamin": "P",
-        "no_hp": "08965432109",
-        "tanggal_lahir": "1988-11-15",
-        "alamat": "Jl. Pekerja No. 2",
-        "npwp": "987654321098765",
-        "nama_bank": "OVO",
-        "no_rekening": "1234567890",
-        "url_foto": "https://example.com/images/worker2.jpg",  # URL foto pekerja
-        "role": "pekerja",
-        "rating": 4.5,
-        "saldo_mypay": 1000000,
-    },
-]
+# Database Import
+from django.db import connection
 
 
-# Halaman Awal
-def begin(request):
-    return render(request, "authenticate/index.html")
+# First Landing Page for Auth
+def first_auth_page(request):
+    # Login and Register Page
+    return render(request, "authenticate/login-register.html")
 
-
+# Login view
 def login(request):
     if request.method == "POST":
+        
+        # Get information from form
         phone = request.POST.get("no_hp")
         password = request.POST.get("password")
 
+        # Check if phone or password is empty
         if not phone or not password:
             error_message = "No HP atau password tidak boleh kosong."
             return render(
                 request, "authenticate/login.html", {"error_message": error_message}
             )
 
-        # Cek data pengguna
-        user = None
-        for pengguna in DUMMY_PENGGUNA:
-            if pengguna["no_hp"] == phone and pengguna["password"] == password:
-                user = pengguna
-                break
-
-        # Cek data pekerja jika tidak ditemukan di pengguna
-        if not user:
-            for pekerja in DUMMY_PEKERJA:
-                if pekerja["no_hp"] == phone and pekerja["password"] == password:
-                    user = pekerja
-                    break
-
+        # Doing validation to databases
+        with connection.cursor() as c:
+            c.execute("SELECT * FROM sijarta.users WHERE nohp = %s AND pwd = %s", [phone, password])
+            user = c.fetchone()
+            
         if user:
-            # Simpan informasi user di session atau cookie
-            request.session["user"] = user  # Simpan data pengguna di session
-            return redirect("homepage")  # Redirect ke halaman utama setelah login
+            nama = user[1]  
+            # If user found, figure out the role
+            user_id = str(user[0])
+            
+            with connection.cursor() as c:
+                c.execute("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_id])
+                pekerja = c.fetchone()
+                
+                c.execute("SELECT * FROM sijarta.pelanggan WHERE id = %s", [user_id])
+                pelanggan = c.fetchone()
+            
+            if pekerja:
+                user_session = {
+                    "id" : user_id,
+                    "no_hp" : phone,
+                    "nama" : nama,
+                    "saldo" : int(user[7]),
+                    "role" : "pekerja"
+                }       
+            elif pelanggan:
+                user_session = {
+                    "id" : user_id,
+                    "no_hp" : phone,
+                    "nama" : nama,
+                    "saldo" : int(user[7]),
+                    "role" : "pelanggan"
+                }      
+            
+            request.session["user"] = user_session
+            
+            return redirect("homepage")
+            
         else:
+            # If user not found
             error_message = "No HP atau password salah"
             return render(
                 request, "authenticate/login.html", {"error_message": error_message}
@@ -105,178 +77,267 @@ def login(request):
 
     return render(request, "authenticate/login.html")
 
-
 # Halaman Logout
 def logout(request):
     if "user" in request.session:
         del request.session["user"]  # Hapus sesi pengguna
-    return redirect("login")
+    return redirect("auth:login")
 
-
-# Halaman Registrasi untuk Pengguna
-def register_pengguna(request):
-    if request.method == "POST":
-        nama = request.POST.get("nama")
-        password = request.POST.get("password")
-        jenis_kelamin = request.POST.get("jenis_kelamin")
-        no_hp = request.POST.get("no_hp")
-        tanggal_lahir = request.POST.get("tanggal_lahir")
-        alamat = request.POST.get("alamat")
-
-        # Validasi No HP unik
-        if any(u["no_hp"] == no_hp for u in DUMMY_PENGGUNA + DUMMY_PEKERJA):
-            error_message = "Nomor HP telah terdaftar."
-            return render(
-                request,
-                "authenticate/register_pengguna.html",
-                {"error_message": error_message},
-            )
-
-        # Tambahkan ke DUMMY_PENGGUNA
-        DUMMY_PENGGUNA.append(
-            {
-                "nama": nama,
-                "password": password,
-                "jenis_kelamin": jenis_kelamin,
-                "no_hp": no_hp,
-                "tanggal_lahir": tanggal_lahir,
-                "alamat": alamat,
-            }
+def register_pelanggan(request):
+    
+    # If not POST, return the page
+    if request.method != "POST":
+        return render(request, "authenticate/register_pelanggan.html")
+    
+    # Get information from form
+    nama = request.POST.get("nama")
+    password = request.POST.get("password")
+    jenis_kelamin = request.POST.get("jenis_kelamin")
+    no_hp = request.POST.get("no_hp")
+    tanggal_lahir = request.POST.get("tanggal_lahir")
+    alamat = request.POST.get("alamat")
+    
+    # Not sure what this prevent, but just a safety measure
+    if not nama or not password or not jenis_kelamin or not no_hp or not tanggal_lahir or not alamat:
+        error_message = "Data tidak boleh kosong."
+        return render(
+            request, "authenticate/register_pelanggan.html", {"error_message": error_message}
         )
-        messages.success(request, "Registrasi berhasil. Silakan login.")
-        return redirect("login")
+        
+    # print(nama, password, jenis_kelamin, no_hp, tanggal_lahir, alamat)
+    # Insert to database
+    try:
+        with connection.cursor() as c:
+            c.execute("INSERT INTO sijarta.users (nama, jeniskelamin, nohp, pwd, tgllahir, alamat, saldomypay) VALUES (%s, %s, %s, %s, %s, %s, %s)", [nama, jenis_kelamin, no_hp, password, tanggal_lahir, alamat, 0])
+            c.execute("SELECT id FROM sijarta.users WHERE nohp = %s", [no_hp])
+            user_id = str(c.fetchone()[0])
+            c.execute("INSERT INTO sijarta.pelanggan (id, level) VALUES (%s, %s)", [user_id, "Basic"])
+    except Exception as e:
+        error_message = "Nomor HP telah terdaftar."
+        return render(
+            request, "authenticate/register_pelanggan.html", {"error_message": error_message}
+        )
+        
+    return render(request, "authenticate/login.html")
 
-    return render(request, "authenticate/register_pengguna.html")
 
-
-# Halaman Registrasi untuk Pekerja
 def register_pekerja(request):
-    if request.method == "POST":
-        nama = request.POST.get("nama")
-        password = request.POST.get("password")
-        jenis_kelamin = request.POST.get("jenis_kelamin")
-        no_hp = request.POST.get("no_hp")
-        tanggal_lahir = request.POST.get("tanggal_lahir")
-        alamat = request.POST.get("alamat")
-        nama_bank = request.POST.get("nama_bank")
-        npwp = request.POST.get("npwp")
-        url_foto = request.POST.get("url_foto")
+    if request.method != "POST":
+        return render(request, "authenticate/register_pekerja.html")
 
-        # Validasi No HP dan NPWP unik
-        if any(u["no_hp"] == no_hp for u in DUMMY_PENGGUNA + DUMMY_PEKERJA):
-            error_message = "Nomor HP telah terdaftar."
-            return render(
-                request,
-                "authenticate/register_pekerja.html",
-                {"error_message": error_message},
-            )
-        if any(u["npwp"] == npwp for u in DUMMY_PEKERJA):
-            error_message = "Nomor NPWP telah terdaftar."
-            return render(
-                request,
-                "authenticate/register_pekerja.html",
-                {"error_message": error_message},
-            )
-
-        # Tambahkan ke DUMMY_PEKERJA
-        DUMMY_PEKERJA.append(
-            {
-                "nama": nama,
-                "password": password,
-                "jenis_kelamin": jenis_kelamin,
-                "no_hp": no_hp,
-                "tanggal_lahir": tanggal_lahir,
-                "alamat": alamat,
-                "nama_bank": nama_bank,
-                "npwp": npwp,
-                "url_foto": url_foto,
-            }
+    nama = request.POST.get("nama")
+    password = request.POST.get("password")
+    jenis_kelamin = request.POST.get("gender")
+    no_hp = request.POST.get("phone")
+    tanggal_lahir = request.POST.get("birthdate")
+    alamat = request.POST.get("address")
+    nama_bank = request.POST.get("bank_name")
+    no_rek = request.POST.get("bank_account")
+    npwp = request.POST.get("npwp")
+    url_foto = request.POST.get("photo_url")
+    
+    c = connection.cursor()
+    
+    if not nama or not password or not jenis_kelamin or not no_hp or not tanggal_lahir or not alamat or not nama_bank or not no_rek or not npwp or not url_foto:
+        error_message = "Data tidak boleh kosong."
+        return render(
+            request, "authenticate/register_pekerja.html", {"error_message": error_message}
         )
-        messages.success(request, "Registrasi berhasil. Silakan login.")
-        return redirect("login")
 
-    return render(request, "authenticate/register_pekerja.html")
-
+    # Find out if the social security number is unique
+    c.execute("SELECT * FROM sijarta.pekerja WHERE nomorrekening = %s and namabank = %s", [no_rek, nama_bank])
+    pekerja = c.fetchone()
+    
+    # Cannt use trigger because the implementation are shitty
+    if pekerja:
+        error_message = "Nomor Rekening telah terdaftar."
+        return render(
+            request, "authenticate/register_pekerja.html", {"error_message": error_message}
+        )
+    
+    # Insert to database
+    try:
+        c.execute("INSERT INTO sijarta.users (nama, jeniskelamin, nohp, pwd, tgllahir, alamat, saldomypay) VALUES (%s, %s, %s, %s, %s, %s, %s)", [nama, jenis_kelamin, no_hp, password, tanggal_lahir, alamat, 0])
+        c.execute("SELECT id FROM sijarta.users WHERE nohp = %s", [no_hp])
+        user_id = str(c.fetchone()[0])
+        c.execute("INSERT INTO sijarta.pekerja (id, namabank, nomorrekening, npwp, linkfoto, rating, jmlpesananselesai) VALUES (%s, %s, %s, %s, %s, %s, %s)", [user_id, nama_bank, no_rek, npwp, url_foto, 0.0, 0])
+    except Exception as e:
+        error_message = "Nomor HP telah terdaftar."
+        return render(
+            request, "authenticate/register_pekerja.html", {"error_message": error_message}
+        )
+    
+    return render(request, "authenticate/login.html")
 
 def register(request):
     return render(request, "authenticate/register.html")
 
-
-# def navbar(request):
-#     return render(request, "navbar.html")
-
-
 def profile(request):
     # Mendapatkan nomor HP dari session
-    user = request.session.get("user", None)
+    user_session = request.session.get("user", None)
+    role = user_session.get("role")
 
-    if not user:
+    if not user_session:
         raise Http404("User not logged in")  # Pengguna harus login terlebih dahulu
-
-    role = user.get(
-        "role", "pengguna"
-    )  # Mengambil role dari data pengguna yang ada di session
-
+    
+    # Get user information
+    c = connection.cursor()
+    c.execute("SELECT * FROM sijarta.users WHERE id = %s", [user_session["id"]])
+    user = c.fetchone()
+    
     context = {
-        "profile": user,
+        "nama" : user[1],
+        "jenis_kelamin" : user[2],
+        "no_hp" : user[3],
+        "tanggal_lahir" : user[5],
+        "alamat" : user[6],
+        "saldo" : user[7],
+        "role" : role
     }
+    
+    # Get specifiec information based on role
+    if role == "pelanggan":
+        c.execute("SELECT * FROM sijarta.pelanggan WHERE id = %s", [user_session["id"]])
+        user_pelanggan = c.fetchone()
+        context["level"] = user_pelanggan[1]
+    
+    elif role == "pekerja":
+        c.execute("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_session["id"]])
+        user_pekerja = c.fetchone()
+        
+        c.execute("SELECT namakategori FROM sijarta.kategori_jasa kj JOIN sijarta.pekerja_kategori_jasa pkj ON kj.id = pkj.kategorijasaid WHERE pkj.pekerjaid = %s", [user_session["id"]])
+        list_kategori = c.fetchall()
+        
+        list_kategori = [kategori[0].replace(",", "").replace(".", "").strip() for kategori in list_kategori]
+        
+        context["nama_bank"] = user_pekerja[1]
+        context["no_rekening"] = user_pekerja[2]
+        context["npwp"] = user_pekerja[3]
+        context["url_foto"] = user_pekerja[4]
+        context["rating"] = user_pekerja[5]
+        context["jml_pesanan_selesai"] = user_pekerja[6]    
+        context["list_kategori"] = list_kategori
 
     return render(request, "profile.html", context)
 
 
-@csrf_exempt
 def updateProfile(request):
-    user = request.session.get("user", None)
-    if not user:
+    user_session = request.session.get("user", None)
+    role = user_session.get("role")
+    if not user_session:
         raise Http404("User not logged in")  # Pengguna harus login terlebih dahulu
 
-    if request.method == "POST":
-        if user["role"] == "pengguna":
-            user["nama"] = request.POST.get("nama")
-            user["jenis_kelamin"] = request.POST.get("jenis_kelamin")
-            user["no_hp"] = request.POST.get("no_hp")
-            user["tanggal_lahir"] = request.POST.get("tanggal_lahir")
-            user["alamat"] = request.POST.get("alamat")
-        else:
-            user["nama"] = request.POST.get("nama")
-            user["jenis_kelamin"] = request.POST.get("jenis_kelamin")
-            user["no_hp"] = request.POST.get("no_hp")
-            user["tanggal_lahir"] = request.POST.get("tanggal_lahir")
-            user["alamat"] = request.POST.get("alamat")
-            user["nama_bank"] = request.POST.get("nama_bank")
-            user["npwp"] = request.POST.get("npwp")
-            user["no_rekening"] = request.POST.get("no_rekening")
-            user["url_foto"] = request.POST.get("url_foto")
-        return redirect("profile")
+    if request.method != "POST":
+        return render(request, "updateProfile.html", {"role": role})  
+    
+    c = connection.cursor()
 
+    if role == "pelanggan":
+        nama = request.POST.get("nama")
+        jenis_kelamin = request.POST.get("jenis_kelamin")
+        no_hp = request.POST.get("no_hp")
+        tanggal_lahir = request.POST.get("tanggal_lahir")
+        alamat = request.POST.get("alamat")
+        
+        if not nama or not jenis_kelamin or not no_hp or not tanggal_lahir or not alamat:
+            error_message = "Data tidak boleh kosong."
+            return render(
+                request, "updateProfile.html", {"error_message": error_message, "role": role}
+            )
+        
+        request.session.modified = True
+        try:    
+            if no_hp != user_session["no_hp"]:
+                c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, nohp = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, no_hp, tanggal_lahir, alamat, user_session["id"]])
+                user_session["no_hp"] = no_hp
+            else:
+                c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, tanggal_lahir, alamat, user_session["id"]])            
+            user_session["nama"] = nama
+
+        except:
+            error_message = "Nomor HP telah terdaftar."
+            return render(
+                request, "updateProfile.html", {"error_message": error_message, "role": role}
+            )
+        
+        return redirect("auth:profile")
+    
+    elif role == "pekerja":
+        nama = request.POST.get("nama")
+        jenis_kelamin = request.POST.get("gender")
+        no_hp = request.POST.get("phone")
+        tanggal_lahir = request.POST.get("birthdate")
+        alamat = request.POST.get("address")
+        nama_bank = request.POST.get("bank_name")
+        no_rek = request.POST.get("bank_account")
+        npwp = request.POST.get("npwp")
+        url_foto = request.POST.get("photo_url")
+        
+        if not nama or not jenis_kelamin or not no_hp or not tanggal_lahir or not alamat or not nama_bank or not no_rek or not npwp or not url_foto:
+            error_message = "Data tidak boleh kosong."
+            return render(
+                request, "updateProfile.html", {"error_message": error_message, "role": role}
+            )
+        
+        # Find out if the social security number is unique
+        c.execute("SELECT * FROM sijarta.pekerja WHERE nomorrekening = %s and namabank = %s and id != %s", [no_rek, nama_bank, user_session["id"]])
+        pekerja = c.fetchone()
+        
+        if pekerja:
+            error_message = "Nomor Rekening telah terdaftar."
+            return render(
+                request, "updateProfile.html", {"error_message": error_message, "role": role}
+            )
+        
+        c.execute("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_session["id"]])
+        user_pekerja = c.fetchone()
+        
+        user_nama_bank = user_pekerja[1]
+        user_no_rek = user_pekerja[2]
+        
+        
+        request.session.modified = True
+        try:
+            if no_hp != user_session["no_hp"]:
+                c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, nohp = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, no_hp, tanggal_lahir, alamat, user_session["id"]])
+            else:
+                c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, tanggal_lahir, alamat, user_session["id"]])
+            
+            if user_nama_bank != nama_bank or user_no_rek != no_rek:
+                c.execute("UPDATE sijarta.pekerja SET namabank = %s, nomorrekening = %s, npwp = %s, linkfoto = %s WHERE id = %s", [nama_bank, no_rek, npwp, url_foto, user_session["id"]])
+            else:
+                c.execute("UPDATE sijarta.pekerja SET npwp = %s, linkfoto = %s WHERE id = %s", [npwp, url_foto, user_session["id"]])
+            
+            user_session["nama"] = nama
+            user_session["no_hp"] = no_hp
+        except Exception as e:
+            error_message = "Nomor HP telah terdaftar."
+            return render(
+                request, "updateProfile.html", {"error_message": error_message, "role": role}
+            )        
+            
+        return redirect("auth:profile")
+
+
+def worker_profile(request, id):
+    c = connection.cursor()
+    c.execute("SELECT * FROM sijarta.users WHERE id = %s", [id])
+    user = c.fetchone()
+    
+    if user is None:
+        raise Http404("Worker not found")
+    
+    c.execute("SELECT * FROM sijarta.pekerja WHERE id = %s", [id])
+    user_pekerja = c.fetchone()
     context = {
-        "profile": user,
+        "nama" : user[1],
+        "no_hp" : user[3],
+        "tanggal_lahir" : user[5],
+        "alamat" : user[6],    
+        "url_foto": user_pekerja[4],
+        "rating": user_pekerja[5],
+        "jml_pesanan_selesai": user_pekerja[6]   
     }
-
-    return render(request, "updateProfile.html", context)
-
-
-# Trigger dan Stored Procedure Danniel Kuning
-# CREATE OR REPLACE FUNCTION check_phone_number() RETURNS TRIGGER AS $$
-# BEGIN
-#     IF (EXISTS (SELECT * FROM users WHERE NoHP = NEW.NoHP)) THEN
-#         RAISE EXCEPTION 'Nomor telepon sudah terdaftar!';
-#     END IF;
-#     RETURN NEW;
-# END;
-# $$ LANGUAGE plpgsql;
-
-# CREATE TRIGGER check_phone_number BEFORE INSERT OR UPDATE ON users
-# FOR EACH ROW EXECUTE FUNCTION check_phone_number();
-
-# CREATE OR REPLACE FUNCTION check_bank_account() RETURNS TRIGGER AS $$
-# BEGIN
-#     IF (EXISTS (SELECT * FROM pekerja WHERE NomorRekening = NEW.NomorRekening AND NamaBank = NEW.NamaBank)) THEN
-#         RAISE EXCEPTION 'Nomor rekening dan Nama bank sudah terdaftar!';
-#     END IF;
-#     RETURN NEW;
-# END;
-# $$ LANGUAGE plpgsql;
-
-# CREATE TRIGGER check_bank_account BEFORE INSERT OR UPDATE ON pekerja
-# FOR EACH ROW EXECUTE FUNCTION check_bank_account();
+    
+    return render(request, "workerProfile.html", context)
+    

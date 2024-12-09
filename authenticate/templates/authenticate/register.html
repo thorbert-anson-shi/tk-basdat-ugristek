@@ -1,0 +1,47 @@
+{% extends "auth_base.html" %} {% block meta %}
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  .button {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    margin: 10px auto;
+    border: 2px solid #000;
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+
+  .button:hover {
+    background-color: grey;
+  }
+
+  .container {
+    background-color: #f9f9f9;
+    padding: 60px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<div style="text-align: center">
+  <h1><b> SIJARTA By UG_RISTEK </b></h1>
+  <br />
+  <div class="container">
+    <a href="pelanggan" class="button">Register Pengguna</a>
+    <a href="pekerja" class="button">Register Pekerja</a>
+  </div>
+
+  {% endblock %}
+</div>

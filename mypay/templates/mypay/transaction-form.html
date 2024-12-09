@@ -2,9 +2,9 @@
 <dialog class="centered-floating-modal p-10" id="transaction-modal">
   <div class="flex flex-col justify-center items-center space-y-5">
     <h1>Form</h1>
-    <p>{Placeholder: Nama User}</p>
-    <p>{Placeholder: Tanggal Transaksi}</p>
-    <p>{Placeholder: Saldo User}</p>
+    <p>Pengguna: {{nama}}</p>
+    <p>Tanggal: <span id="date"></span></p>
+    <p>Saldo pengguna: {{saldo}}</p>
     <label for="category-dropdown">Kategori Transaksi</label>
     <select
       name="kategori"
@@ -12,14 +12,18 @@
       onchange="handleTypeChange(event)"
     >
       <option value="topup">Top Up MyPay</option>
+      {% if role == "pelanggan" %}
       <option value="pay">Bayar Transaksi</option>
+      {% endif %}
       <option value="transfer">Transfer MyPay</option>
       <option value="withdraw">Withdrawal</option>
     </select>
     <form
       id="input-form"
+      onsubmit="handleFormSubmit(event)"
       class="flex flex-col space-y-5 border-2 border-black w-full h-fit items-center justify-center p-5"
     >
+      {% csrf_token %}
       <template id="topup-template">
         <div class="flex flex-row gap-2 items-center">
           <label for="nominal-dropdown">Nominal</label>
@@ -27,11 +31,13 @@
         </div>
         <button type="submit">Top Up</button>
       </template>
+      {% if role == "pelanggan" %}
       <template id="pay-template">
         <label for="jasa-dropdown">Pesanan Jasa</label>
         <select name="jasa" id="jasa-dropdown"></select>
         <button type="submit">Bayar</button>
       </template>
+      {% endif %}
       <template id="transfer-template">
         <label for="nomor-hp">No. HP</label>
         <input type="text" name="nomor-hp" id="nomor-hp" />

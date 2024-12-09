@@ -1,0 +1,169 @@
+{% extends 'auth_base.html' %} {% block meta %}
+<style>
+  /* Custom styles that can't be easily replicated with Tailwind */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: theme("colors.gray.300");
+    border-radius: 4px;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+  <div
+    class="w-full max-w-md bg-white rounded-lg shadow-md p-6 overflow-y-auto max-h-[90vh] custom-scrollbar"
+  >
+    <h2
+      class="text-2xl font-bold text-center border-b border-gray-200 pb-4 mb-6"
+    >
+      Form Register
+    </h2>
+
+    <form
+      method="post"
+      action="{% url 'auth:register_pekerja' %}"
+      class="space-y-4"
+    >
+      {% csrf_token %}
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">Nama :</label>
+        <input
+          type="text"
+          name="nama"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">Password :</label>
+        <input
+          type="password"
+          name="password"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">Jenis Kelamin :</label>
+        <div class="col-span-2 flex space-x-4">
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="gender"
+              value="L"
+              required
+              class="form-radio text-blue-600"
+            />
+            <span class="ml-2">L</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="gender"
+              value="P"
+              required
+              class="form-radio text-blue-600"
+            />
+            <span class="ml-2">P</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">NoHP :</label>
+        <input
+          type="text"
+          name="phone"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">Tanggal Lahir :</label>
+        <input
+          type="date"
+          name="birthdate"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">Alamat :</label>
+        <input
+          type="text"
+          name="address"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">Nama Bank :</label>
+        <select
+          name="bank_name"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Pilih Bank</option>
+          <option value="BCA">BCA</option>
+          <option value="BNI">BNI</option>
+          <option value="BRI">BRI</option>
+          <option value="Mandiri">Mandiri</option>
+          <option value="BebekBank">BebekBank</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">No Rekening :</label>
+        <input
+          type="text"
+          name="bank_account"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">NPWP :</label>
+        <input
+          type="text"
+          name="npwp"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="grid grid-cols-3 items-center">
+        <label class="text-sm font-medium text-gray-700">URL Foto :</label>
+        <input
+          type="text"
+          name="photo_url"
+          required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="flex justify-center mt-6">
+        <button
+          type="submit"
+          class="w-full max-w-xs py-2 bg-black text-white rounded-md hover:bg-gray-800 transition duration-300 ease-in-out"
+        >
+          Register
+        </button>
+      </div>
+
+      {% if error_message %}
+      <div class="bg-red-100 text-red-700 p-3 rounded-md text-center mt-4">
+        {{ error_message }}
+      </div>
+      {% endif %}
+    </form>
+  </div>
+</div>
+{% endblock %}
