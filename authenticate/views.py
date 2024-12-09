@@ -260,8 +260,6 @@ def updateProfile(request):
                 request, "updateProfile.html", {"error_message": error_message, "role": role}
             )
         
-        
-        
         return redirect("auth:profile")
     
     elif role == "pekerja":

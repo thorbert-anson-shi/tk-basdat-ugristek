@@ -8,10 +8,9 @@ import json
 # Fungsi untuk tampilkan halaman diskon beserta data voucher dan promo.
 def show_hal_diskon(request):
     with connection.cursor() as cursor:
-        cursor.execute("SET search_path TO public,sijarta;")
-        cursor.execute("SELECT * FROM diskon d JOIN voucher v ON d.Kode = v.Kode;")
-        vouchers = cursor.fetchall()
-        cursor.execute("SELECT * FROM promo;")
+        cursor.execute("SELECT * FROM diskon d JOIN voucher v ON d.Kode = v.Kode")
+        voucher = cursor.fetchall()
+        cursor.execute("SELECT * FROM promo")
         promo = cursor.fetchall()
 
     context = {

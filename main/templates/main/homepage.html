@@ -1,52 +1,68 @@
-{% extends 'base.html' %} {% block content %}
-<div class="container mt-4">
-    <h1>Selamat Datang di Sijarta</h1>
+{% extends 'base.html' %}
+{% block meta %}
+    <title>Homepage</title>
+{% endblock meta %}
 
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <label for="kategori" class="form-label">Filter Kategori Jasa</label>
-            <select id="kategori" name="kategori" class="form-select">
-                <option value="">Semua Kategori</option>
-                {% for kategori in kategori_jasa %}
-                    <option value="{{ kategori.id }}" {% if selected_kategori == kategori.id|stringformat:"s" %}selected{% endif %}>
-                        {{ kategori.nama_kategori }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label for="search" class="form-label">Cari Subkategori Jasa</label>
-            <input type="text" id="search" name="search" class="form-control" 
-                    placeholder="Masukkan nama subkategori" value="{{ search_subkategori }}">
-        </div>
-        <div class="col-md-4 align-self-end">
-            <button type="submit" class="btn btn-primary">Filter</button>
-            <a href="{% url 'homepage' %}" class="btn btn-secondary">Reset</a>
-        </div>
-    </form>
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">SIJARTA</h1>
+        
+        <!--benerin search method-nya namasubkategori-->
+        <!-- Filter Section -->
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label for="kategori" class="form-label">Kategori</label>
+                <select id="kategori" name="kategori" class="form-select">
+                    <option value="">Semua Kategori</option>
+                    {% for kategori in kategori_jasa %}
+                        <option value="{{ kategori.id }}" {% if kategori.id == request.GET.kategori|default:'' %}selected{% endif %}>
+                            {{ kategori.namakategori }}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="search" class="form-label">Nama Subkategori</label>
+                <div class="input-group">
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Cari Subkategori Jasa">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </form>
 
-    <div class="row">
-        {% for subkategori in subkategori_jasa %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ subkategori.nama_subkategori }}</h5>
-                        <!-- Jika Anda ingin menampilkan nama kategori, Anda perlu mengambilnya berdasarkan kategori_jasa_id -->
-                        <h6 class="card-subtitle mb-2 text-muted">
-                            {% for kategori in kategori_jasa %}
-                                {% if kategori.id == subkategori.kategori_jasa_id %}
-                                    {{ kategori.nama_kategori }}
+        <!-- List of Kategori and Subkategori -->
+        <div class="accordion" id="accordionExample">
+            {% for kategori in kategori_jasa %} 
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ kategori.id }}">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ kategori.id }}" aria-expanded="true" aria-controls="collapse{{ kategori.id }}">
+                        {{ kategori.namakategori }}
+                    </button>
+                </h2>
+                <div id="collapse{{ kategori.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" aria-labelledby="heading{{ kategori.id }}" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <ul class="list-group">
+                            {% for subkategori in subkategori_jasa %}
+                                {% if subkategori.kategorijasaid == kategori.id %}
+                                    <li class="list-group-item">
+                                        {% if user.role %}
+                                            <a href="{% url 'subkategori_jasa:subkategori_jasa' subkategori.id %}">
+                                                {{ subkategori.namasubkategori }}
+                                            </a>
+                                        {% else %}
+                                            {{ subkategori.namasubkategori }}
+                                        {% endif %}
+                                    
+                                    
+                                    </li>
                                 {% endif %}
                             {% endfor %}
-                        </h6>
-                        <p class="card-text">{{ subkategori.deskripsi }}</p>
-                        <a href="{% url 'subkategori_jasa:subkategori_jasa_pelanggan' subkategori.id %}" class="btn btn-primary">Lihat Detail</a>
+                        </ul>
                     </div>
                 </div>
             </div>
-        {% empty %}
-            <p>Tidak ada subkategori jasa yang ditemukan.</p>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock content %}
