@@ -18,7 +18,7 @@
       <div class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
         <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6 overflow-y-auto max-h-[90vh] custom-scrollbar">
           <div class="text-2xl font-bold text-center border-b border-gray-200 pb-4 mb-6">Update Profile Pelanggan</div>
-          <form method="post" action="{% url 'edit_profile' %}" class="space-y-4">
+          <form method="post" action="{% url 'auth:edit_profile' %}" class="space-y-4">
             {% csrf_token %}
             <div class="grid grid-cols-3 items-center">
               <label class="text-sm font-medium text-gray-700">Nama :</label>
@@ -109,7 +109,7 @@
         <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6 overflow-y-auto max-h-[90vh] custom-scrollbar">
           <h2 class="text-2xl font-bold text-center border-b border-gray-200 pb-4 mb-6">Update Profile Pekerja</h2>
           
-          <form method="post" action="{% url 'edit_profile' %}" class="space-y-4">
+          <form method="post" action="{% url 'auth:edit_profile' %}" class="space-y-4">
             {% csrf_token %}
             
             <div class="grid grid-cols-3 items-center">

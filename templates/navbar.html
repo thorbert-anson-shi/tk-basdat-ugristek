@@ -1,40 +1,42 @@
-<nav class="z-50 navbar fixed top-0 left-0 w-full bg-gray-800 text-white shadow-lg">
+<nav
+  class="z-50 navbar fixed top-0 left-0 w-full bg-gray-800 text-white shadow-lg"
+>
   <div
     class="navbar-container w-full px-4 py-3 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2"
   >
     {% if request.session.user.role == 'pelanggan' %}
     <a
-      href="/"
+      href="{% url 'homepage' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Homepage
     </a>
     <a
-      href="/mypay/"
+      href="{% url 'mypay:home' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       MyPay
     </a>
     <a
-      href="/subkategori_jasa/view_pemesanan_jasa/"
+      href="{% url 'subkategori_jasa:view_pemesanan_jasa' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Kelola Pesanan Saya
     </a>
     <a
-      href="/diskon/"
+      href="{% url 'diskon:show_hal_diskon' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Diskon
     </a>
     <a
-      href="auth/profile/"
+      href="{% url 'auth:profile' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Profile
     </a>
     <a
-      href="/auth/logout"
+      href="{% url 'auth:logout' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Logout
@@ -44,37 +46,37 @@
     </span>
     {% elif request.session.user.role == 'pekerja' %}
     <a
-      href="/"
+      href="{% url 'homepage' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Homepage
     </a>
     <a
-      href="/mypay/"
+      href="{% url 'mypay:home' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       MyPay
     </a>
     <a
-      href="/pekerjaan_jasa/"
+      href="{% url 'pekerjaan_jasa:home' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Kelola Pekerjaan Saya
     </a>
     <a
-      href="/pekerjaan_jasa/list"
+      href="{% url 'pekerjaan_jasa:pekerjaan_list' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Kelola Status Pekerjaan
     </a>
     <a
-      href="auth/profile/"
+      href="{% url 'auth:profile' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Profile
     </a>
     <a
-      href="auth/logout"
+      href="{% url 'auth:logout' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Logout
@@ -84,13 +86,13 @@
     </span>
     {% else %}
     <a
-      href="auth/login"
+      href="{% url 'auth:login' %}"
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Login
     </a>
     <a
-      href="auth/register"
+      href={% url 'auth:register' %}
       class="nav-item text-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
     >
       Register
