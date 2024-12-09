@@ -74,11 +74,13 @@ def subkategori_jasa(request, subkategori_id):
         'testimoni_list': testimoni_list,
         'metode_bayar_list': metode_bayar_list,
         "user": request.session.get("user", None),
+        'subkategori_id': subkategori_id,
     }
 
     # print(kategori)
     print("====================")
-    print(sesi_layanan)
+    # print(sesi_layanan)
+    print(testimoni_list)
 
     return render(request, "subkategori_jasa/display_subkategori.html", context)
 

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block meta %} 
+    <title>Form Pemesanan Jasa</title>
+{% endblock meta %}
+{% block content %}
+    <div class="container mt-4">
+        <label for="filter_subkategori">Subkategori</label>
+        <select id="filter_subkategori" name="filter_subkategori">
+            <option value="">ganti ini</option>
+            {% for subkategori in filter_subkategori %}
+                <option value="{{ subkategori }}" {% if subkategori == selected_subkategori %} selected {% endif %}>
+                    {{ subkategori }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="filter_status">Status Pesanan</label>
+        <select id="filter_status" name="filter_status">
+            <option value="">ganti ini jg</option>
+            {% for status in filter_status %}
+                <option value="{{ status }}" {% if status == selected_status %} selected {% endif %}>
+                    {{ status }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button onclick="apply_filter()">Apply</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th> Subkategori Jasa </th>
+                <th> Sesi Layanan </th>
+                <th> Harga </th>
+                <th> Nama Pekerja </th>
+                <th> Status </th>
+                <th> </th> 
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for pesanan in daftar_pesanan %}
+                <tr>
+                    <td> {{ pesanan.subkategori }} </td>
+                    <td> {{ pesanan.sesi_layanan }} </td>
+                    <td> Rp{{ pesanan.harga }} </td>
+                    <td> {{ pesanan.nama_pekerja }} </td>
+                    <td> {{ pesanan.status }} </td>
+                    <td> 
+                        {% if pesanan.status == "Menunggu Pembayaran" or pesanan.status == "Mencari Pekerja Terdekat" %}
+                            <button onclick="cancel_pesanan('{{ pesanan.id }}')">Cancel</button>
+                        {% elif pesanan.status == "Selesai" and not pesanan.testimoni_dibuat %}
+                            <button onlick="buat_testimoni('{{ pesanan.id }}')">Buat Testimoni</button>
+                        {% endif %} 
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function apply_filter(){
+            const subkategori = document.getElementById('filter_subkategori').value;
+            const status = document.getElementById('filter_status').value;
+
+            const url = new URL(window.location.href);
+            url.searchParams.set('subkategori', subkategori);
+            url.searchParams.set('status', status);
+
+            window.location.href = url;
+        }
+
+        function cancel_pesanan(pesanan_id){
+            if (confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')){
+                fetch('batalkan_pesanan/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: `pesanan_id = ${pesanan_id}`,
+                })
+                .then(response=>response.json())
+                .then(data=>{
+                    if(data.success){
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error=>{
+                    console.error("Error: ", error);
+                    alert("Terjadi kesalahan.");
+                })
+            }
+        }
+
+        function buat_testimoni(pesanan_id){
+            window.location.href = `/form_testimoni/${pesanan_id}`; //nanti isi url-nya
+        }
+    </script>
+{% endblock content %}

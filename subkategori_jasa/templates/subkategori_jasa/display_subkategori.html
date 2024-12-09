@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block meta %} 
+  <title>{{ subkategori.nama_subkategori }}</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">{{ kategori.namakategori }} </h1>
+    <h2 class="text-center">{{ subkategori.namasubkategori }}</h2>
+    <p class="text-center">{{ subkategori.deskripsi }}</p>
+
+    <!-- Sesi Layanan -->
+    <section class="mb-8">
+        <h2>Sesi Layanan</h2>
+        {% if sesi_layanan %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Sesi Layanan</th>
+                            <th style="text-align: center;">Harga</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sesi in sesi_layanan %}
+                        <tr>
+                            <td style="text-align: center;">{{ sesi.sesi }}</td>
+                            <td style="text-align: center;">Rp {{ sesi.harga|floatformat:2 }}</td>
+                            {% if user.role == 'pelanggan' %}
+                                <td>
+                                    <button
+                                        class="btn btn-primary"
+                                        onclick="openModal('{{ sesi.sesi }}', '{{ sesi.harga }}')"
+                                        data-sesi="{{ sesi.sesi }}"
+                                    >
+                                        Pesan
+                                    </button>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    
+                </table>
+            </div>
+        {% else %}
+            <p>Mohon maaf, saat ini, sesi layanan sedang tidak tersedia. Mohon coba lagi di kesempatan berikutnya.</p>
+        {% endif %}
+    </section>
+
+    <!--ini otw ganti, link dari url aja-->
+    <!-- Daftar Pekerja -->
+    <section class="mb-8">
+        <h2 class="mt-5">Pekerja</h2>
+        {% if pekerja_list %}
+            <div class="row">
+                {% for pekerja in pekerja_list %}
+                <div class="col-md-3">
+                    <div class="card mb-4">
+                        <img src="{{ pekerja.linkfoto }}" class="card-img-top" alt="{{ pekerja.nama }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ pekerja.nama }}</h5>
+                            <p class="card-text">Rating: {{ pekerja.rating }}/5</p>
+                            <a href="{% url 'auth:worker_profile' pekerja.id %}" class="btn btn-primary">Lihat Profil</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p> Mohon maaf, saat ini, pekerja sedang tidak tersedia. Mohon coba lagi di kesempatan berikutnya.</p>
+        {% endif %}
+
+        {% if user.role == 'pekerja' %}
+            {% if terdaftar %}
+                <p>Anda sudah tergabung dalam kategori jasa ini.</p>
+            {% else %}
+                <div style="width: 100%; text-align: center;">
+                    <button id="button_bergabung" type="submit" class="btn btn-primary" 
+                    style="margin: auto; padding: 10px 28px; font-size: 24px; width: auto;">Gabung</button>
+                </div>
+            {% endif %}
+        {% endif %}
+    </section>
+
+    <!-- Testimoni -->
+    <section>
+        <h2 class="mt-5">Testimoni</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">Nama Pengguna</th>
+                        <th style="text-align: center;">Teks Testimoni</th>
+                        <th style="text-align: center;">Tanggal</th>
+                        <th style="text-align: center;">Nama Pekerja</th>
+                        <th style="text-align: center;">Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for testi in testimoni_list %}
+                    <tr>
+                        <td style="text-align: center;" >{{ testi.nama_pengguna }}</td>
+                        <td>{{ testi.teks }}</td>
+                        <td style="text-align: center;">{{ testi.tgl|date:"d-m-Y" }}</td>
+                        <td style="text-align: center;">{{ testi.nama_pekerja }}</td>
+                        <td style="text-align: center;">{{ testi.rating }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
+        </div>
+    </section>
+    
+    <!-- Modal Pesan Jasa -->
+    <div id="pesanModal" tabindex="-1" aria-labelledby="pesanModalLabel">
+        <div class="modal-dialog" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050;">
+            <div class="modal-content">
+                <button type="button" class="close" onclick="closeModal()">
+                    &times;
+                </button>
+                {% comment %} <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div> {% endcomment %}
+                {% comment %} <form method="post" id="pesan_jasa_form" action="{% url 'subkategori_jasa:pesan_jasa' %}"> {% endcomment %}
+                <form method="post" id="pesan_jasa_form" action="/subkategori_jasa/pesan_jasa/">
+
+                    {% csrf_token %}
+                    <input type="hidden" id="subkategori_id" name="subkategori_id" value='{{ subkategori_id }}'>
+                    <input type="hidden" id="sesi_nama" name="sesi_nama">
+                    <input type="hidden" id="sesi_harga" name="sesi_harga">
+                    <input type="hidden" id="sesi_sesi" name="sesi_sesi">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pesanModalLabel">Pesan Jasa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Tanggal Pemesanan -->
+                        <div class="mb-3">
+                            <label for="tanggal_pemesanan" class="form-label">Tanggal Pemesanan</label>
+                            <input type="date" class="form-control" id="tanggal_pemesanan" name="tanggal_pemesanan" readonly>
+                        </div>
+                        <!-- Kode Diskon -->
+                        <div class="mb-3">
+                            <label for="kode_diskon" class="form-label">Diskon</label>
+                            <input type="text" class="form-control" id="kode_diskon" name="kode_diskon" placeholder="Masukkan kode diskon">
+                        </div>
+                        <!-- Total Biaya -->
+                        <div class="mb-3">
+                            <label for="total_biaya" class="form-label">Total Pembayaran</label>
+                            <input type="text" class="form-control" id="total_biaya" readonly>
+                        </div>
+                        <!-- Metode Pembayaran -->
+                        <div class="mb-3">
+                            <label for="metode_bayar" class="form-label">Metode Pembayaran</label>
+                            <select class="form-select" id="metode_bayar" name="metode_bayar" required>
+                                {% for metode in metode_bayar_list %}
+                                <option value="{{ metode.id }}">{{ metode.nama }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            Pesan Jasa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        const tanggal_input = document.getElementById('tanggal_pemesanan');
+        const today = new Date();
+        const formatted_date = today.getDate().toString().padStart(2, '0') + '/' + (today.getMonth() + 1).toString().padStart(2, '0') + '/' + today.getFullYear();
+        tanggal_input.value = formatted_date;
+
+        function openModal(sesi_nama, sesi_harga){
+            const modal = document.getElementById('pesanModal');
+            modal.style.display = 'block';
+
+            const modalElement = document.getElementById('pesanModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            document.getElementById('sesi_nama').value = sesi_nama;
+            document.getElementById('sesi_harga').value = sesi_harga;
+            document.getElementById('total_biaya').value = `Rp ${sesi_harga}`;
+
+            const sesi_sesi = document.querySelector(`[data-sesi="${sesi_nama}"]`).getAttribute('data-sesi');
+            document.getElementById('sesi_sesi').value = sesi_sesi;
+        }
+
+        function closeModal(){
+            document.getElementById('pesanModal').style.display = "none";
+        }
+
+        document.getElementById('button_bergabung').addEventListener('click', function(){
+            console.log("{% url 'subkategori_jasa:bergabung' kategori_id=kategori.id %}");
+            fetch("{% url 'subkategori_jasa:bergabung' kategori_id=kategori.id %}", {
+                method:'POST',
+                headers:{
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response=>response.json())
+            .then(data=>{
+                if (data.success){
+                    alert(data.message);
+                    buttonWrapper.innerHTML='<p>Anda telah bergabung!</p>';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error=>console.error("Error:", error));
+        });
+
+        const form = document.getElementById('pesan_jasa_form');
+        form.addEventListener('submit', function(event){
+            event.preventDefault();
+
+            fetch(form.action, {
+                method:'POST',
+                headers:{
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body:new URLSearchParams(new FormData(form)),
+            })
+            .then(response=>{
+                if (response.ok){
+                    window.location.href="{% url 'subkategori_jasa:form_pemesanan_jasa' %}";
+                } else {
+                    response.json()
+                    .then(data=>alert(data.message || "Terjadi galat."));
+                }
+            })
+            .catch(error=>console.error('Error: ', error));
+        });
+    </script>
+{% endblock content %}
