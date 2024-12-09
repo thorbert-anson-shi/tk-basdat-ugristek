@@ -304,7 +304,7 @@ def form_pemesanan_jasa(request):
                 display_daftar_pemesanan_syntax+=" AND SKJ.namasubkategori = %s"
                 params.append(selected_subkategori)
             if selected_status:
-                display_daftar_pemesanan_syntax+=" AND TPSSP.status = %s"
+                display_daftar_pemesanan_syntax+=" AND TPSSP.statuspesanan = %s"
                 params.append(selected_status)
 
             cursor.execute(display_daftar_pemesanan_syntax, params)

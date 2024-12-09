@@ -1,0 +1,63 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-lg">
+  <div class="container-fluid">
+    {% if request.session.user.role == 'pelanggan' %}
+    <a href="{% url 'homepage' %}" class="navbar-brand">
+      Homepage
+    </a>
+    <div class="navbar-nav">
+      <a href="{% url 'mypay:home' %}" class="nav-item nav-link">
+        MyPay
+      </a>
+      <a href="{% url 'subkategori_jasa:form_pemesanan_jasa' %}" class="nav-item nav-link">
+        Kelola Pesanan Saya
+      </a>
+      <a href="{% url 'diskon:show_hal_diskon' %}" class="nav-item nav-link">
+        Diskon
+      </a>
+      <a href="{% url 'auth:profile' %}" class="nav-item nav-link">
+        Profile
+      </a>
+      <a href="{% url 'auth:logout' %}" class="nav-item nav-link">
+        Logout
+      </a>
+    </div>
+    <span class="navbar-text ml-auto">
+      Hello, {{ request.session.user.nama }}, {{ request.session.user.role }}
+    </span>
+    {% elif request.session.user.role == 'pekerja' %}
+    <a href="{% url 'homepage' %}" class="navbar-brand">
+      Homepage
+    </a>
+    <div class="navbar-nav">
+      <a href="{% url 'mypay:home' %}" class="nav-item nav-link">
+        MyPay
+      </a>
+      <a href="{% url 'pekerjaan_jasa:home' %}" class="nav-item nav-link">
+        Kelola Pekerjaan Saya
+      </a>
+      <a href="{% url 'pekerjaan_jasa:pekerjaan_list' %}" class="nav-item nav-link">
+        Kelola Status Pekerjaan
+      </a>
+      <a href="{% url 'auth:profile' %}" class="nav-item nav-link">
+        Profile
+      </a>
+      <a href="{% url 'auth:logout' %}" class="nav-item nav-link">
+        Logout
+      </a>
+    </div>
+    <span class="navbar-text ml-auto">
+      Hello, {{ request.session.user.nama }}, {{ request.session.user.role }}
+    </span>
+    {% else %}
+    <a href="{% url 'auth:login' %}" class="navbar-brand">
+      Login
+    </a>
+    <a href="{% url 'auth:register' %}" class="navbar-brand">
+      Register
+    </a>
+    <span class="navbar-text ml-auto">
+      Hello, Guest
+    </span>
+    {% endif %}
+  </div>
+</nav>

@@ -9,8 +9,8 @@ DECLARE
     id_status_mencari_pekerja INTEGER;
 BEGIN
     -- Mendapatkan IdStatus untuk 'Dibatalkan' dan 'Mencari Pekerja Terdekat'
-    SELECT Id INTO id_status_dibatalkan FROM STATUS_PESANAN WHERE Keterangan = 'Dibatalkan';
-    SELECT Id INTO id_status_mencari_pekerja FROM STATUS_PESANAN WHERE Keterangan = 'Mencari Pekerja Terdekat';
+    SELECT Id INTO id_status_dibatalkan FROM STATUS_PESANAN WHERE statuspesanan = 'Dibatalkan';
+    SELECT Id INTO id_status_mencari_pekerja FROM STATUS_PESANAN WHERE statuspesanan = 'Mencari Pekerja Terdekat';
     
     -- Memeriksa apakah status diubah menjadi 'Dibatalkan'
     IF NEW.IdStatus = id_status_dibatalkan THEN
@@ -23,7 +23,7 @@ BEGIN
             
             -- Mengembalikan saldo ke MyPay pelanggan
             UPDATE users
-            SET saldomypay = COALESCE(Saldo, 0) + total_biaya
+            SET saldomypay = COALESCE(saldomypay, 0) + total_biaya
             WHERE id = pelanggan_id;
             
             -- Logging (opsional)

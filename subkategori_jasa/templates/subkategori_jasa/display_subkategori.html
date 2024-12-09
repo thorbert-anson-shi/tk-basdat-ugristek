@@ -1,10 +1,10 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'bases.html' %}
 {% block meta %} 
   <title>{{ subkategori.nama_subkategori }}</title>
 {% endblock meta %}
 
 {% block content %}
+{% include 'navbars.html' %}
 <div class="container mt-4">
     <h1 class="text-center">{{ kategori.namakategori }} </h1>
     <h2 class="text-center">{{ subkategori.namasubkategori }}</h2>
