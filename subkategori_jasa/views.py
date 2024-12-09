@@ -70,7 +70,7 @@ def subkategori_jasa(request, subkategori_id):
         'kategori': kategori,
         'sesi_layanan': sesi_layanan,
         'pekerja_list': pekerja_list,
-        'terdaftar': terdaftar,
+        'terdaftar': terdaftar[0]['status_terdaftar'],
         'testimoni_list': testimoni_list,
         'metode_bayar_list': metode_bayar_list,
         "user": request.session.get("user", None),
@@ -81,6 +81,8 @@ def subkategori_jasa(request, subkategori_id):
     # print("====================")
     # print(sesi_layanan)
     # print(testimoni_list)
+    print("============")
+    print(context['terdaftar'])
 
     return render(request, "subkategori_jasa/display_subkategori.html", context)
 
@@ -122,7 +124,6 @@ def pesan_jasa(request):
                         status=400
                         )
                     
-                    print("4")
                 else:
                     return JsonResponse({
                         "success": False,
@@ -337,7 +338,7 @@ def form_pemesanan_jasa(request):
         "selected_status": selected_status,
     }
 
-    print(daftar_pesanan)
+    print(daftar_pesanan[0]['testimoni_dibuat'])
     print("===================")
     print(filter_subkategori)
     print("===================")
@@ -348,10 +349,10 @@ def form_pemesanan_jasa(request):
     print(selected_status)
 
     return render(request, "subkategori_jasa/form_pemesanan_jasa.html", context)
-    
 
 
 # @login_required
+@csrf_exempt
 def batalkan_pesanan(request):
     with connection.cursor() as cursor:
         cursor.execute(set_syntax())
