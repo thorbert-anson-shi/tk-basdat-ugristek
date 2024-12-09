@@ -81,7 +81,7 @@ def login(request):
 def logout(request):
     if "user" in request.session:
         del request.session["user"]  # Hapus sesi pengguna
-    return redirect("login")
+    return redirect("auth:login")
 
 def register_pelanggan(request):
     
@@ -104,7 +104,7 @@ def register_pelanggan(request):
             request, "authenticate/register_pelanggan.html", {"error_message": error_message}
         )
         
-    print(nama, password, jenis_kelamin, no_hp, tanggal_lahir, alamat)
+    # print(nama, password, jenis_kelamin, no_hp, tanggal_lahir, alamat)
     # Insert to database
     try:
         with connection.cursor() as c:
@@ -113,6 +113,7 @@ def register_pelanggan(request):
             user_id = str(c.fetchone()[0])
             c.execute("INSERT INTO sijarta.pelanggan (id, level) VALUES (%s, %s)", [user_id, "Basic"])
     except Exception as e:
+        print(no_hp)
         print(e)
         error_message = "Nomor HP telah terdaftar."
         return render(
@@ -162,7 +163,9 @@ def register_pekerja(request):
         c.execute("SELECT id FROM sijarta.users WHERE nohp = %s", [no_hp])
         user_id = str(c.fetchone()[0])
         c.execute("INSERT INTO sijarta.pekerja (id, namabank, nomorrekening, npwp, linkfoto, rating, jmlpesananselesai) VALUES (%s, %s, %s, %s, %s, %s, %s)", [user_id, nama_bank, no_rek, npwp, url_foto, 0.0, 0])
-    except:
+    except Exception as e:
+        print(no_hp)
+        print(e)
         error_message = "Nomor HP telah terdaftar."
         return render(
             request, "authenticate/register_pekerja.html", {"error_message": error_message}
@@ -246,17 +249,24 @@ def updateProfile(request):
                 request, "updateProfile.html", {"error_message": error_message, "role": role}
             )
         
+        request.session.modified = True
         try:    
-            c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, nohp = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, no_hp, tanggal_lahir, alamat, user_session["id"]])
+            if no_hp != user_session["no_hp"]:
+                c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, nohp = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, no_hp, tanggal_lahir, alamat, user_session["id"]])
+                user_session["no_hp"] = no_hp
+            else:
+                c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, tanggal_lahir, alamat, user_session["id"]])            
             user_session["nama"] = nama
-            user_session["no_hp"] = no_hp
+
         except:
             error_message = "Nomor HP telah terdaftar."
             return render(
                 request, "updateProfile.html", {"error_message": error_message, "role": role}
             )
         
-        return redirect("profile")
+        
+        
+        return redirect("auth:profile")
     
     elif role == "pekerja":
         nama = request.POST.get("nama")
@@ -276,7 +286,7 @@ def updateProfile(request):
             )
         
         # Find out if the social security number is unique
-        c.execute("SELECT * FROM sijarta.pekerja WHERE nomorrekening = %s and namabank = %s", [no_rek, nama_bank])
+        c.execute("SELECT * FROM sijarta.pekerja WHERE nomorrekening = %s and namabank = %s and id != %s", [no_rek, nama_bank, user_session["id"]])
         pekerja = c.fetchone()
         
         if pekerja:
@@ -285,16 +295,36 @@ def updateProfile(request):
                 request, "updateProfile.html", {"error_message": error_message, "role": role}
             )
         
+        c.execute("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_session["id"]])
+        user_pekerja = c.fetchone()
+        
+        user_nama_bank = user_pekerja[1]
+        user_no_rek = user_pekerja[2]
+        
+        print(user_nama_bank, user_no_rek)
+        
+        request.session.modified = True
         try:
-            c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, nohp = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, no_hp, tanggal_lahir, alamat, user_session["id"]])
-            c.execute("UPDATE sijarta.pekerja SET namabank = %s, nomorrekening = %s, npwp = %s, linkfoto = %s WHERE id = %s", [nama_bank, no_rek, npwp, url_foto, user_session["id"]])
-        except:
+            if no_hp != user_session["no_hp"]:
+                c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, nohp = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, no_hp, tanggal_lahir, alamat, user_session["id"]])
+            else:
+                c.execute("UPDATE sijarta.users SET nama = %s, jeniskelamin = %s, tgllahir = %s, alamat = %s WHERE id = %s", [nama, jenis_kelamin, tanggal_lahir, alamat, user_session["id"]])
+            
+            if user_nama_bank != nama_bank or user_no_rek != no_rek:
+                c.execute("UPDATE sijarta.pekerja SET namabank = %s, nomorrekening = %s, npwp = %s, linkfoto = %s WHERE id = %s", [nama_bank, no_rek, npwp, url_foto, user_session["id"]])
+            else:
+                c.execute("UPDATE sijarta.pekerja SET npwp = %s, linkfoto = %s WHERE id = %s", [npwp, url_foto, user_session["id"]])
+            
+            user_session["nama"] = nama
+            user_session["no_hp"] = no_hp
+        except Exception as e:
+            print(e)
             error_message = "Nomor HP telah terdaftar."
             return render(
                 request, "updateProfile.html", {"error_message": error_message, "role": role}
             )        
             
-        return redirect("profile")
+        return redirect("auth:profile")
 
 
 def worker_profile(request, id):
