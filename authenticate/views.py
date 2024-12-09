@@ -82,7 +82,6 @@ def logout(request):
     if "user" in request.session:
         del request.session["user"]  # Hapus sesi pengguna
     return redirect("auth:login")
-    return redirect("auth:login")
 
 def register_pelanggan(request):
     
@@ -261,9 +260,6 @@ def updateProfile(request):
                 request, "updateProfile.html", {"error_message": error_message, "role": role}
             )
         
-        
-        
-        return redirect("auth:profile")
         return redirect("auth:profile")
     
     elif role == "pekerja":
