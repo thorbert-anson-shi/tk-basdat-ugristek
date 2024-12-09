@@ -117,7 +117,7 @@
     <!-- Modal Pesan Jasa -->
     <div id="pesanModal" tabindex="-1" aria-labelledby="pesanModalLabel">
         <div class="modal-dialog" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050;">
-            <div class="modal-content">
+            <div class="modal-content" style="border: 2px solid #007bff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);background-color: #ffffff; opacity: 1;">
                 <button type="button" class="close" onclick="closeModal()">
                     &times;
                 </button>
@@ -125,7 +125,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div> {% endcomment %}
                 {% comment %} <form method="post" id="pesan_jasa_form" action="{% url 'subkategori_jasa:pesan_jasa' %}"> {% endcomment %}
-                <form method="post" id="pesan_jasa_form" action="/subkategori_jasa/pesan_jasa/">
+                    <form method="post" id="pesan_jasa_form" action="{% url 'subkategori_jasa:pesan_jasa' %}">
+                {% comment %} <form method="post" id="pesan_jasa_form" action="/subkategori_jasa/pesan_jasa/"> {% endcomment %}
 
                     {% csrf_token %}
                     <input type="hidden" id="subkategori_id" name="subkategori_id" value='{{ subkategori_id }}'>
@@ -140,7 +141,7 @@
                         <!-- Tanggal Pemesanan -->
                         <div class="mb-3">
                             <label for="tanggal_pemesanan" class="form-label">Tanggal Pemesanan</label>
-                            <input type="date" class="form-control" id="tanggal_pemesanan" name="tanggal_pemesanan" readonly>
+                            <input type="text" class="form-control" id="tanggal_pemesanan" name="tanggal_pemesanan" readonly>
                         </div>
                         <!-- Kode Diskon -->
                         <div class="mb-3">
@@ -155,9 +156,9 @@
                         <!-- Metode Pembayaran -->
                         <div class="mb-3">
                             <label for="metode_bayar" class="form-label">Metode Pembayaran</label>
-                            <select class="form-select" id="metode_bayar" name="metode_bayar" required>
+                            <select class="form-select" id="metode_bayar" name="metode_bayar">
                                 {% for metode in metode_bayar_list %}
-                                <option value="{{ metode.id }}">{{ metode.nama }}</option>
+                                    <option value="{{ metode.id }}">{{ metode.nama }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -183,9 +184,9 @@
             const modal = document.getElementById('pesanModal');
             modal.style.display = 'block';
 
-            const modalElement = document.getElementById('pesanModal');
+            {% comment %} const modalElement = document.getElementById('pesanModal');
             const modal = new bootstrap.Modal(modalElement);
-            modal.show();
+            modal.show(); {% endcomment %}
 
             document.getElementById('sesi_nama').value = sesi_nama;
             document.getElementById('sesi_harga').value = sesi_harga;

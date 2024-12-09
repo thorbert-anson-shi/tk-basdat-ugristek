@@ -74,7 +74,7 @@ def subkategori_jasa(request, subkategori_id):
         'testimoni_list': testimoni_list,
         'metode_bayar_list': metode_bayar_list,
         "user": request.session.get("user", None),
-        'subkategori_id': subkategori_id,
+        'subkategori_id': uuid.UUID(subkategori_id),
     }
 
     # print(kategori)
