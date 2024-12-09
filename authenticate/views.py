@@ -113,8 +113,6 @@ def register_pelanggan(request):
             user_id = str(c.fetchone()[0])
             c.execute("INSERT INTO sijarta.pelanggan (id, level) VALUES (%s, %s)", [user_id, "Basic"])
     except Exception as e:
-        print(no_hp)
-        print(e)
         error_message = "Nomor HP telah terdaftar."
         return render(
             request, "authenticate/register_pelanggan.html", {"error_message": error_message}
@@ -164,8 +162,6 @@ def register_pekerja(request):
         user_id = str(c.fetchone()[0])
         c.execute("INSERT INTO sijarta.pekerja (id, namabank, nomorrekening, npwp, linkfoto, rating, jmlpesananselesai) VALUES (%s, %s, %s, %s, %s, %s, %s)", [user_id, nama_bank, no_rek, npwp, url_foto, 0.0, 0])
     except Exception as e:
-        print(no_hp)
-        print(e)
         error_message = "Nomor HP telah terdaftar."
         return render(
             request, "authenticate/register_pekerja.html", {"error_message": error_message}
@@ -301,7 +297,6 @@ def updateProfile(request):
         user_nama_bank = user_pekerja[1]
         user_no_rek = user_pekerja[2]
         
-        print(user_nama_bank, user_no_rek)
         
         request.session.modified = True
         try:
@@ -318,7 +313,6 @@ def updateProfile(request):
             user_session["nama"] = nama
             user_session["no_hp"] = no_hp
         except Exception as e:
-            print(e)
             error_message = "Nomor HP telah terdaftar."
             return render(
                 request, "updateProfile.html", {"error_message": error_message, "role": role}
