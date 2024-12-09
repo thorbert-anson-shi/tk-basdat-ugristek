@@ -72,8 +72,8 @@ window.onload = async () => {
 
     optionEle = clone.querySelector("option");
 
-    optionEle.innerHTML = choice[1];
-    optionEle.value = choice[0];
+    optionEle.innerHTML = choice;
+    optionEle.value = choice;
 
     statusDropdown.appendChild(clone);
   });

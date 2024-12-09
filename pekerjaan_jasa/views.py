@@ -9,10 +9,18 @@ import json
 from django.db import connection
 
 
-class Status(Enum):
-    tiba = "Tiba Di Lokasi"
-    in_progress = "Melakukan Pelayanan Jasa"
-    selesai = "Selesai Melakukan Pelayanan"
+class Status:
+    status_to_id = dict()
+
+    @classmethod
+    def get_available_statuses(self):
+        with connection.cursor() as cursor:
+            cursor.execute("set search_path to sijarta;")
+            cursor.execute("select * from status_pesanan;")
+            status_list = dictfetchall(cursor)
+
+        for status in status_list:
+            self.status_to_id[status["statuspesanan"]] = status["id"]
 
 
 def home(request: HttpRequest):
@@ -24,9 +32,7 @@ def pekerjaan_list(request: HttpRequest):
 
 
 def get_categories(request: HttpRequest):
-    # TODO: Confirm correctness with auth service
-    user = request.session.get("user")
-    user_id = user["id"]
+    user_id = request.session["user"]["id"]
 
     # Fetching categories from user
     with connection.cursor() as cursor:
@@ -44,8 +50,29 @@ def get_categories(request: HttpRequest):
     return JsonResponse(jsonData)
 
 
+def take_ticket(request: HttpRequest):
+    Status.get_available_statuses()
+
+    user_id = request.session["user"]["id"]
+    ticket_id = request.GET.get("ticket_id")
+
+    with connection.cursor() as cursor:
+        cursor.execute("set search_path to sijarta;")
+        cursor.execute(
+            "update tr_pemesanan_jasa set idpekerja = %s where idtrpemesanan = %s;"
+            "update tr_pemesanan_status set idstatus = %s where idtrpemesanan = %s;",
+            [
+                user_id,
+                ticket_id,
+                Status.status_to_id["Menunggu Pekerja Berangkat"],
+                ticket_id,
+            ],
+        )
+
+    return HttpResponse("Pesanan berhasil diambil", status=200)
+
+
 def get_subcategories(request: HttpRequest):
-    # TODO: Fetch category ID instead in order to keep things consistent
     category_id = request.GET.get("kategori")
 
     # Fetch subcategories from chosen category
@@ -70,7 +97,7 @@ def get_tickets(request: HttpRequest):
     with connection.cursor() as cursor:
         cursor.execute("set search_path to sijarta;")
         cursor.execute(
-            "select sj.id as subkategoriid, sj.namasubkategori as subkategori, p.nama as nama_pelanggan, tpj.tglpemesanan as tanggal_pemesanan, "
+            "select tpj.id, sj.id as subkategoriid, sj.namasubkategori as subkategori, p.nama as nama_pelanggan, tpj.tglpemesanan as tanggal_pemesanan, "
             "tpj.tglpekerjaan as tanggal_pekerjaan, tpj.totalbiaya as biaya, st.statuspesanan as status "
             "from tr_pemesanan_jasa tpj "
             "join subkategori_jasa sj on sj.id = tpj.idkategorijasa "
@@ -89,12 +116,11 @@ def get_tickets(request: HttpRequest):
                 filtered_tickets,
             )
         )
-        print(filtered_tickets)
 
     if status != "" and status is not None:
         filtered_tickets = list(
             filter(
-                lambda ticket: Status(ticket["status"]).name == status,
+                lambda ticket: ticket["status"] == status,
                 filtered_tickets,
             )
         )
@@ -105,23 +131,33 @@ def get_tickets(request: HttpRequest):
 
 @csrf_exempt
 def update_ticket_status(request: HttpRequest):
-    body_data = json.loads(request.body)
-    ticket_id = body_data.get("id")
+    ticket_id = request.POST.get("id")
 
-    ticket = list(filter(lambda ticket: ticket["id"] == ticket_id, tickets))
+    with connection.cursor() as cursor:
+        cursor.execute("set search_path to sijarta;")
+        cursor.execute(
+            "select s.statuspesanan from tr_pemesanan_status as tps "
+            "join status_pesanan s on tps.idstatus = s.id "
+            "where tps.idtrpemesanan = %s;",
+            [ticket_id],
+        )
+        ticket_status = cursor.fetchone()
+        print(ticket_status)
 
-    assert len(ticket) == 1
-
-    ticket = ticket[0]
-
-    if ticket["status"] == Status.tiba.value:
-        ticket["status"] = Status.in_progress.value
-    elif ticket["status"] == Status.in_progress.value:
-        ticket["status"] = Status.selesai.value
-    else:
-        response = HttpResponse({"message": "Status pekerjaan sudah selesai!"})
-        response.status_code = 304
-        return response
+        if ticket_status == "Pekerja Tiba Di Lokasi":
+            cursor.execute(
+                "update tr_pemesanan_status set idstatus = %s where idtrpemesanan = %s;",
+                [Status.status_to_id["Pelayanan Jasa Sedang Dilakukan"], ticket_id],
+            )
+        elif ticket_status == "Pelayanan Jasa Sedang Dilakukan":
+            cursor.execute(
+                "update tr_pemesanan_status set idstatus = %s where idtrpemesanan = %s;",
+                [Status.status_to_id["Selesai"], ticket_id],
+            )
+        else:
+            response = HttpResponse({"message": "Status pekerjaan sudah selesai!"})
+            response.status_code = 304
+            return response
 
     response = HttpResponse({"message": "Update pesanan berhasil diupdate!"})
     response.status_code = 200
@@ -129,8 +165,22 @@ def update_ticket_status(request: HttpRequest):
 
 
 def get_status_choices(request: HttpRequest):
+    Status.get_available_statuses()
     return JsonResponse(
-        {"choices": [(status.name, status.value) for status in (Status)]}
+        {
+            "choices": list(
+                filter(
+                    lambda status: status
+                    in [
+                        "Menunggu Pekerja Berangkat",
+                        "Pekerja Tiba Di Lokasi",
+                        "Pelayanan Jasa Sedang Dilakukan",
+                        "Pesanan Selesai",
+                    ],
+                    list(Status.status_to_id.keys()),
+                )
+            )
+        }
     )
 
 
