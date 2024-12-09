@@ -8,8 +8,8 @@
         id="account-info"
         class="flex flex-row justify-between p-3 border-2 border-black h-fit grow-[2]"
       >
-        <p id="nomor-hp">{Placeholder: No. HP}</p>
-        <p id="saldo">{Placeholder: Saldo}</p>
+        <p id="nomor-hp">Nomor HP: {{nomor_hp}}</p>
+        <p id="saldo">Saldo: {{saldo}}</p>
       </div>
       <button
         class="border-2 border-black h-fit grow hover:bg-neutral-100 p-3"
@@ -22,9 +22,18 @@
     <main id="scroll-container" class="flex flex-col overflow-y-scroll gap-2">
       <template id="transaction-item">
         <div class="flex flex-row justify-between p-4 border-2 border-black">
-          <p>Nominal: <span id="nominal"></span></p>
-          <p>Tanggal Transaksi: <span id="tanggal"></span></p>
-          <p>Kategori Transaksi: <span id="kategori"></span></p>
+          <div class="flex flex-col items-center">
+            <p>Nominal:</p>
+            <span id="nominal"></span>
+          </div>
+          <div class="flex flex-col items-center">
+            <p>Tanggal Transaksi:</p>
+            <span id="tanggal"></span>
+          </div>
+          <div class="flex flex-col items-center">
+            <p>Kategori Transaksi:</p>
+            <span id="kategori"></span>
+          </div>
         </div>
       </template>
     </main>
