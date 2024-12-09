@@ -86,6 +86,9 @@ def subkategori_jasa(request, subkategori_id):
 
 # @login_required
 def pesan_jasa(request):
+    with connection.cursor() as cursor:
+        cursor.execute(set_syntax())
+
     if request.method == "POST":
         subkategori_id = request.POST.get('subkategori_id')
         sesi_harga = int(request.POST.get('sesi_harga'))
@@ -96,6 +99,7 @@ def pesan_jasa(request):
 
         transaksi_baru_id = uuid.uuid4()
         curr_tgl = datetime.now()
+        
 
         try:
             curr_potongan = 0
@@ -129,9 +133,9 @@ def pesan_jasa(request):
 
             # nanti ganti id-nya
             if metode_bayar == 'daedfde6-91df-4090-b40a-e0dd26650696':
-                id_status_pesanan = '877a2841-c396-451c-a51b-915fd36731ed'
+                id_status_pesanan = '877a2841-c396-451c-a51b-915fd36731ed' # menunggu pembayaran
             else:
-                id_status_pesanan = ''
+                id_status_pesanan = '7afaf420-f94b-457a-a582-e685dbef8bf2' # mencari pekerja terdekat
 
             with connection.cursor() as cursor:
                 if kode_diskon:
@@ -183,6 +187,9 @@ def pesan_jasa(request):
 
 # @login_required
 def bergabung(request, kategori_id):
+    with connection.cursor() as cursor:
+        cursor.execute(set_syntax())
+
     if request.method=="POST":
         user_id = request.session.get('user').get("id")
 
@@ -227,6 +234,9 @@ def bergabung(request, kategori_id):
 
 # @login_required
 def form_pemesanan_jasa(request):
+    with connection.cursor() as cursor:
+        cursor.execute(set_syntax())
+
     user_id = request.session.get('user').get("id")
     daftar_pesanan, filter_subkategori, filter_status = [], [], []
 
@@ -321,6 +331,9 @@ def form_pemesanan_jasa(request):
 
 # @login_required
 def batalkan_pesanan(request):
+    with connection.cursor() as cursor:
+        cursor.execute(set_syntax())
+
     if request.method == "POST":
         pesanan_id = request.POST.get("pesanan_id")
 
@@ -354,4 +367,7 @@ def batalkan_pesanan(request):
 
 # @login_required
 def show_form_testimoni(request):
+    with connection.cursor() as cursor:
+        cursor.execute(set_syntax())
+    print("oke")
     return render(request, "subkategori_jasa/form_testimoni.html")

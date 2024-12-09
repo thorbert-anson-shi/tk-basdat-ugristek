@@ -11,12 +11,15 @@
       rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="static/styles.css">
+    {% comment %} <link rel="stylesheet" href="static/styles.css"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
     {% block meta %} {% endblock meta %}
   </head>
 
   <body>
     {% include 'navbar.html' %}
+    {% load static %}
     <div class="mt-48"></div>
     {% block content %} {% endblock content %}
   </body>
