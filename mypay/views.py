@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http import HttpRequest, JsonResponse
-from diskon.views import get_user_balance
 from main.utils import dictfetchall
 
 from django.db import connection
