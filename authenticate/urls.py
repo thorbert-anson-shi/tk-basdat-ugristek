@@ -1,6 +1,8 @@
 from django.urls import path
 from authenticate.views import *
 
+app_name = "auth"
+
 urlpatterns = [
     # First Landing Page
     path("", first_auth_page, name="first_auth_page"),

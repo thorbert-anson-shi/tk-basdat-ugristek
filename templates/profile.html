@@ -1,162 +1,230 @@
-{% extends 'auth_base.html' %}
+{% extends 'auth_base.html' %} {% block content %}
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+  <div
+    class="max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300"
+  >
+    {% if role == "pelanggan" %}
+    <!-- Tampilan untuk Pengguna -->
+    <h2
+      class="text-2xl font-bold mb-6 text-gray-700 sticky top-0 bg-white z-10 pb-2 border-b"
+    >
+      Profil Pelanggan
+    </h2>
 
-{% block content %}
-  <div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-    <div class="max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300">
-      {% if role == "pelanggan" %}
-      <!-- Tampilan untuk Pengguna -->
-      <h2 class="text-2xl font-bold mb-6 text-gray-700 sticky top-0 bg-white z-10 pb-2 border-b">Profil Pelanggan</h2>
+    <div class="space-y-5">
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">Nama:</span>
+          {{ nama }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Jenis Kelamin:</span
+          >
+          {{ jenis_kelamin }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">No HP:</span>
+          {{ no_hp }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Tanggal Lahir:</span
+          >
+          {{ tanggal_lahir }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">Alamat:</span>
+          {{ alamat }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Saldo MyPay:</span
+          >
+          {{ saldo }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">Level:</span>
+          {{ level }}
+        </p>
+      </div>
+    </div>
 
-      <div class="space-y-5">
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Nama:</span> 
-            {{ nama }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Jenis Kelamin:</span> 
-            {{ jenis_kelamin }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">No HP:</span> 
-            {{ no_hp }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Tanggal Lahir:</span> 
-            {{ tanggal_lahir }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Alamat:</span> 
-            {{ alamat }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Saldo MyPay:</span> 
-            {{ saldo }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Level:</span> 
-            {{ level }}
-          </p>
-        </div>
+    {% elif role == "pekerja" %}
+    <!-- Tampilan untuk Pekerja -->
+    <h2
+      class="text-2xl font-bold mb-6 text-gray-700 sticky top-0 bg-white z-10 pb-2 border-b"
+    >
+      Profil Pekerja
+    </h2>
+
+    <div class="flex justify-center mb-6">
+      <img
+        src="{{ url_foto }}"
+        class="w-32 h-32 rounded-full object-cover shadow-md"
+      />
+    </div>
+
+    <div class="space-y-5">
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">Nama:</span>
+          {{ nama }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Jenis Kelamin:</span
+          >
+          {{ jenis_kelamin }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">No HP:</span>
+          {{ no_hp }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Tanggal Lahir:</span
+          >
+          {{ tanggal_lahir }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">Alamat:</span>
+          {{ alamat }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Saldo MyPay:</span
+          >
+          {{ saldo }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">Nama Bank:</span>
+          {{ nama_bank }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Rekening Bank:</span
+          >
+          {{ no_rekening }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">NPWP:</span>
+          {{ npwp }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1">Rating:</span>
+          {{ rating }}
+        </p>
+      </div>
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Jumlah Pesanan Selesai:</span
+          >
+          {{ jml_pesanan_selesai }}
+        </p>
       </div>
 
-      {% elif role == "pekerja" %}
-      <!-- Tampilan untuk Pekerja -->
-      <h2 class="text-2xl font-bold mb-6 text-gray-700 sticky top-0 bg-white z-10 pb-2 border-b">Profil Pekerja</h2>
-
-      <div class="flex justify-center mb-6">
-        <img src="{{ url_foto }}" class="w-32 h-32 rounded-full object-cover shadow-md" />
+      {% if list_kategori %}
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Kategori Pekerjaan:</span
+          >
+          {% for kategori in list_kategori %} {{kategori}} {% if not forloop.last%}, {% endif %} {% endfor %}
+        </p>
       </div>
-
-      <div class="space-y-5">
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Nama:</span> 
-            {{ nama }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Jenis Kelamin:</span> 
-            {{ jenis_kelamin }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">No HP:</span> 
-            {{ no_hp }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Tanggal Lahir:</span> 
-            {{ tanggal_lahir }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Alamat:</span> 
-            {{ alamat }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Saldo MyPay:</span> 
-            {{ saldo }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Nama Bank:</span> 
-            {{ nama_bank }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Rekening Bank:</span> 
-            {{ no_rekening }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">NPWP:</span> 
-            {{ npwp }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Rating:</span> 
-            {{ rating }}
-          </p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-          <p class="text-gray-600">
-            <span class="font-semibold block text-gray-800 mb-1">Jumlah Pesanan Selesai:</span> 
-            {{ jml_pesanan_selesai }}
-          </p>
-        </div>
-
-        {% if list_kategori %}
-          <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-            <p class="text-gray-600">
-              <span class="font-semibold block text-gray-800 mb-1">Kategori Pekerjaan:</span> 
-              {% for kategori in list_kategori %}
-                {{kategori}}{% if not forloop.last %}, {% endif %}
-              {% endfor %}
-            </p>
-          </div>
-        {% else %}
-          <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-            <p class="text-gray-600">
-              <span class="font-semibold block text-gray-800 mb-1">Kategori Pekerjaan:</span> 
-              -
-            </p>
-          </div>
-        {% endif %}
-        
+      {% else %}
+      <div
+        class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <p class="text-gray-600">
+          <span class="font-semibold block text-gray-800 mb-1"
+            >Kategori Pekerjaan:</span
+          >
+          -
+        </p>
       </div>
       {% endif %}
     </div>
-
-    <div class="mt-6 text-right sticky bottom-0 bg-white pt-2 border-t">
-      <button
-        class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-        onclick="window.location.href=`{% url 'edit_profile' %}`"
-      >
-        Update
-      </button>
-    </div>
+    {% endif %}
   </div>
+
+  <div class="mt-6 text-right sticky bottom-0 bg-white pt-2 border-t">
+    <button
+      class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+      onclick="window.location.href=`{% url 'auth:edit_profile' %}`"
+    >
+      Update
+    </button>
+  </div>
+</div>
 {% endblock %}
